@@ -1,0 +1,27 @@
+citHeader("To cite", sQuote("sparr"), "in publications, please use:")
+
+citEntry(entry = "article",
+         title = "sparr: Analyzing spatial relative risk using using fixed and adaptive kernel density estimation in R",
+         author = personList(
+           as.person("T.M. Davies"), 
+           as.person("M.L. Hazelton"),
+		   as.person("J.C. Marshall")
+           ),
+         journal = "Submitted for publication.",
+         volume= "",
+         number = "",
+         pages = "",
+         year  = "2010",
+         url   = "",
+	 textVersion = paste(
+		"T.M. Davies, M.L. Hazelton and J.C. Marshall (2010).",
+		"sparr: Analyzing spatial relative risk using using fixed and adaptive kernel density estimation in R,",
+	        "Submitted for publication",
+         	"",
+	        "")
+         )
+
+
+citFooter("For references to additional papers describing the use of",
+          sQuote("sparr"),
+	  "see", sQuote("help(\"sparr\")."))
