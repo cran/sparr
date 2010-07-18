@@ -1,4 +1,4 @@
-KSPEC <- function(location,data,h,type){
+KSPEC <- function(location,data,h,type,counts){
     
     if(any(is.na(location))) return(NA)
     
@@ -11,7 +11,7 @@ KSPEC <- function(location,data,h,type){
     }
     
     umat <- t((location-matrix(datavec,d,n,byrow=T))/h)
-    result <- (1/(n*h^d))*sum(apply(umat,1,KERNEL,type=type,dim=d))
-    
+    result <- (1/(n*h^d))*sum(counts*apply(umat,1,KERNEL,type=type,dim=d))
+	
     return(result)
 }

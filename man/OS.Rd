@@ -16,10 +16,10 @@ OS(data, nstar = NULL, scaler = NA)
 An object of type \code{\link{data.frame}}, \code{\link{list}}, \code{\link{matrix}}, or \code{\link[spatstat]{ppp}} giving the observed data from which we wish to calculate the OS bandwidth. See `Details' for further information.
 }
   \item{nstar}{
-A single numeric, positive, nonzero value to use in place of the number of observations \emph{n} in the OS formula. If \code{NULL} (default), \emph{n} will simply be the number of observations in \code{data}.
+A single numeric, positive value to use in place of the number of observations \emph{n} in the OS formula. If \code{NULL} (default), \emph{n} will simply be the number of observations in \code{data}.
 }
   \item{scaler}{
-A single numeric, positive, nonzero value to use for transforming the result with respect to the scale of the recorded data. If \code{NA} (default), the scaling value is set as the mean of the interquartile ranges (IQR) of the \emph{x} and \emph{y} data values divided by 1.34 (Gaussian IQR). This approach was used in Davies and Hazelton (2010).
+A single numeric, positive value to use for transforming the result with respect to the scale of the recorded data. If \code{NA} (default), the scaling value is set as the mean of the interquartile ranges (IQR) of the \emph{x} and \emph{y} data values divided by 1.34 (Gaussian IQR). This approach was used in Davies and Hazelton (2010).
 }
 }
 
@@ -33,7 +33,7 @@ A single numeric value of the estimated bandwidth.
 }
 
 \references{
-Davies, T.M. and Hazelton, M.L. (2010), Adaptive kernel estimation of spatial relative risk, \emph{Submitted for publication}.\cr\cr
+Davies, T.M. and Hazelton, M.L. (2010), Adaptive kernel estimation of spatial relative risk, \emph{Statistics in Medicine}, in press [accepted 20 May 2010].\cr\cr
 Terrell, G.R. (1990), The maximal smoothing principle in density estimation, \emph{Journal of the American Statistical Association}, \bold{85}, 470-477.
 }
 \author{

@@ -1,8 +1,8 @@
-compute.coord <- function(coord,data,h,n,WIN,type,q.opt=1,forAdapt=F){
+compute.coord <- function(coord,data,h,n,WIN,type,q.opt=1,forAdapt=F,counts){
     XU <- (coord[1]-data[,1])/h
     YU <- (coord[2]-data[,2])/h
 
-    result <- ((1/n)*sum((1/h^2)*KERNEL(data.frame(cbind(XU,YU)),type)))/q.opt
+    result <- ((1/n)*sum((1/h^2)*counts*KERNEL(data.frame(cbind(XU,YU)),type)))/q.opt
     
     if(is.null(WIN)){
         return(result)

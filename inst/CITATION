@@ -7,17 +7,18 @@ citEntry(entry = "article",
            as.person("M.L. Hazelton"),
 		   as.person("J.C. Marshall")
            ),
-         journal = "Submitted for publication.",
+         journal = "Journal of Statistical Software",
          volume= "",
          number = "",
          pages = "",
+		 note = "In press",
          year  = "2010",
          url   = "",
 	 textVersion = paste(
 		"T.M. Davies, M.L. Hazelton and J.C. Marshall (2010).",
 		"sparr: Analyzing spatial relative risk using using fixed and adaptive kernel density estimation in R,",
-	        "Submitted for publication",
-         	"",
+	        "Journal of Statistical Software",
+         	"[in press]",
 	        "")
          )
 
