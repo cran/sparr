@@ -32,7 +32,7 @@ Prince et al. (2001), The geographical distribution of primary biliary cirrhosis
 The authors thank Prof. Peter Diggle at Lancaster University (\url{http://www.lancs.ac.uk/staff/diggle/}) for providing access to these data.
 }
 \references{
-Davies, T.M. and Hazelton, M.L. (2010), Adaptive kernel estimation of spatial relative risk, \emph{submitted for publication}.
+Davies, T.M. and Hazelton, M.L. (2010), Adaptive kernel estimation of spatial relative risk, \emph{Statistics in Medicine}, in press [accepted 20 May 2010].
 }
 \examples{
 data(PBC)

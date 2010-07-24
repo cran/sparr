@@ -1,4 +1,4 @@
-plot.rrs <- function(x, ..., display = c("heat","contour","persp","3d"), show.WIN = TRUE){
+plot.rrs <- function(x, ..., display = c("heat","contour","persp","3d"), show.WIN = TRUE, tolerance.matrix = NULL, tol.opt = list(raise = 0.01, col = "black", levels = 0.05, lty = 1, lwd = 1)){
 	extras <- list(...)
 	if(is.null(extras$xlab)) extras$xlab <- ""
 	if(is.null(extras$ylab)) extras$ylab <- ""
@@ -9,6 +9,16 @@ plot.rrs <- function(x, ..., display = c("heat","contour","persp","3d"), show.WI
 		if(is.null(list(...)$axes)) plot(image,...,axes=T)
 		else plot(image,...)
 		if(show.WIN) plot(x$f$WIN,add=T,lwd=2)
+		if(!is.null(tolerance.matrix)){
+			gr <- nrow(tolerance.matrix)
+			
+			if(is.null(tol.opt$col)) tol.opt$col <- "black"
+			if(is.null(tol.opt$levels)) tol.opt$levels <- 0.05
+			if(is.null(tol.opt$lty)) tol.opt$lty <- 1
+			if(is.null(tol.opt$lwd)) tol.opt$lwd <- 1
+			
+			contour(seq(x$f$WIN$xrange[1],x$f$WIN$xrange[2],length=gr),seq(x$f$WIN$yrange[1],x$f$WIN$yrange[2],length=gr),tolerance.matrix,add=T,drawlabels=F,levels=tol.opt$levels,lty=tol.opt$lty,lwd=tol.opt$lwd,col=tol.opt$col)
+		}
 	} else if(display=="contour"){
 		contour(x$f$X,x$f$Y,x$rsM,...)
 		if(show.WIN) plot(x$f$WIN,add=T,lwd=2)
@@ -21,7 +31,7 @@ plot.rrs <- function(x, ..., display = c("heat","contour","persp","3d"), show.WI
 			}
 		}
 		do.call("persp",c(list(x=x$f$X,y=x$f$Y,z=x$rsM), extras))
-		if(show.WIN) lines(x$f$WIN,lwd=2)
+		
 	} else if(display=="3d"){
 		if(!is.null(extras$col)){
 			if(length(extras$col)>1){
@@ -30,8 +40,25 @@ plot.rrs <- function(x, ..., display = c("heat","contour","persp","3d"), show.WI
 		}
 		do.call("persp3d", c(list(x=x$f$X,y=x$f$Y,z=x$rsM), extras)) 
 		if(show.WIN){
+			cat("approximating 3D boundary...\n")
 			gridLocs <- apply(as.data.frame(vertices(x$f$WIN)),1,getNearest,gridx=sort(rep(x$f$X,length(x$f$X))),gridy=rep(x$f$Y,length(x$f$Y)),WIN=x$f$WIN)
 			lines3d(c(vertices(x$f$WIN)$x,vertices(x$f$WIN)$x[1]),c(vertices(x$f$WIN)$y,vertices(x$f$WIN)$y[1]),c(as.vector(t(x$rsM))[gridLocs],as.vector(t(x$rsM))[gridLocs][1]),lwd=4)
+		}
+		if(!is.null(tolerance.matrix)){
+			cat("approximating 3D tolerance contours...\n")
+			gr <- nrow(tolerance.matrix)
+			xt <- sort(rep(seq(x$f$WIN$xrange[1],x$f$WIN$xrange[2],length=gr),gr))
+			yt <- rep(seq(x$f$WIN$yrange[1],x$f$WIN$yrange[2],length=gr),gr)
+			rholocs <- apply(matrix(c(xt,yt),gr*gr,2),1,getNearest,gridx=sort(rep(x$f$X,length(x$f$X))),gridy=rep(x$f$Y,length(x$f$Y)),WIN=x$f$WIN)
+			rhot <- as.vector(t(x$rsM))[rholocs]
+			
+			if(is.null(tol.opt$raise)) tol.opt$raise <- 0.01
+			if(is.null(tol.opt$col)) tol.opt$col <- "black"
+			if(is.null(tol.opt$levels)) tol.opt$levels <- 0.05
+			if(is.null(tol.opt$lwd)) tol.opt$lwd <- 1
+			
+			tol3d(seq(x$f$WIN$xrange[1],x$f$WIN$xrange[2],length=gr),seq(x$f$WIN$yrange[1],x$f$WIN$yrange[2],length=gr),tolerance.matrix,rhot,tol.opt$levels,tol.opt$raise,tol.opt$col,tol.opt$lwd)
+			
 		}
 	}
 }

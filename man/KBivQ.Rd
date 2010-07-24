@@ -25,7 +25,7 @@ A character string.
 }
   
 \details{
-If \code{X} is a vector of length 2, then the two components \code{X[1]} and \code{X[2]} are taken to be the x and y coordinates respectively. For multiple evaluations at differing coordinates, \code{X} must be a data frame with \code{X[,1]} and \code{X[,2]} as the corresponding pairs of x and y coordinates respectively.\cr\cr
+If \code{X} is a vector of length 2, then the two components \code{X[1]} and \code{X[2]} are taken to be the x and y coordinates respectively. For multiple evaluations at differing coordinates, \code{X} must be a data frame with \code{X[,1]} and \code{X[,2]} as the corresponding pairs of x and y coordinates respectively.
 
 Unlike the bivariate Gaussian kernel, it is necessary to specify the method of extending the univariate quartic kernel to the bivariate case; this can be done in two different ways, one way resulting in a slightly different kernel to the other. An explanation of these `spherical' and `product' approaches is given in Wand and Jones (1995).
 }

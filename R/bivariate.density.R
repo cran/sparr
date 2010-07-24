@@ -1,4 +1,4 @@
-bivariate.density <- function(data, ID = NULL, pilotH, globalH = pilotH, adaptive = TRUE, edgeCorrect = TRUE, res = 50, WIN = NULL, xrange = NULL, yrange = NULL, trim = 5, gamma = NULL, atExtraCoords = NULL, use.ppp.methods = TRUE, comment = TRUE){
+bivariate.density <- function(data, ID = NULL, pilotH, globalH = pilotH, adaptive = TRUE, edgeCorrect = TRUE, res = 50, WIN = NULL, counts = NULL, intensity = FALSE, xrange = NULL, yrange = NULL, trim = 5, gamma = NULL, atExtraCoords = NULL, use.ppp.methods = TRUE, comment = TRUE){
     
 	if(comment) print(date())
 	if(comment) cat("\nperforming basic check of arguments...\n")
@@ -81,6 +81,33 @@ bivariate.density <- function(data, ID = NULL, pilotH, globalH = pilotH, adaptiv
 		if(trim<=0) trim <- NA
 	}
 	
+	
+	
+	if(!is.null(counts)){
+		counts <- round(counts) ##warning here?
+		if(any(counts<=0)) stop("counts must be positive integers")
+	}
+	
+	
+	duplicates <- dupli.data.frame(data,WIN,comment)
+	#dupunidata <- NULL
+	if(!is.null(duplicates$counts)&&!is.null(counts)){
+		warning("duplicated coords detected - ignoring user supplied arg 'counts' and creating own")
+		counts <- duplicates$counts
+		data <- duplicates$data
+	} else if(!is.null(duplicates$counts)&&is.null(counts)){
+		counts <- duplicates$counts
+		data <- duplicates$data
+	} else if(is.null(duplicates$counts)&&is.null(counts)){
+		counts <- rep(1,nrow(data))
+	}
+	
+	n <- sum(counts)
+	if(intensity) nfac <- n
+	else nfac <- 1
+	
+	if(length(counts)!=nrow(data)) stop("'counts' arg must be of equal length to no. of obervations")
+	
 	#if(kType!="gaus"){
 	#	kType <- "gaus"
 	#	warning("currently only supports bivariate Gaussian kernel. sorry.")
@@ -114,7 +141,7 @@ bivariate.density <- function(data, ID = NULL, pilotH, globalH = pilotH, adaptiv
 	
     #gamma <- 
 	hypoH <- spec_pilot_f_values <- total_pilot_f_values <- extra_pilot_f_values <- NULL
-	n <- nrow(data)
+	#n <- nrow(data)
     datarange <- data.frame(cbind(xdatarange,ydatarange))
 	datarange.list <- list(x=xrg,y=yrg)
     datarangeNA <- data.frame(cbind(xdatarange,ydatarange))
@@ -124,15 +151,15 @@ bivariate.density <- function(data, ID = NULL, pilotH, globalH = pilotH, adaptiv
 	
 	if(adaptive){
 		if(!use.ppp.methods){
-			spec_pilot_f_values <- apply(as.matrix(data),1,KSPEC,data=data,h=pilotH,type=kType)
-			total_pilot_f_values <- apply(as.matrix(datarangeNA),1,KSPEC,data=data,h=pilotH,type=kType)
+			spec_pilot_f_values <- apply(as.matrix(data),1,KSPEC,data=data,h=pilotH,type=kType,counts=counts)
+			total_pilot_f_values <- apply(as.matrix(datarangeNA),1,KSPEC,data=data,h=pilotH,type=kType,counts=counts)
 			if(edgeCorrect){
 				spec_pilot_f_values <- spec_pilot_f_values/getQhz_Fixed(Xseq=data[,1],Yseq=data[,2],kType=kType,WIN=WIN,h=pilotH,both=F)$qhz
 				total_pilot_f_values <- total_pilot_f_values/getQhz_Fixed(Xseq=datarange[,1],Yseq=datarange[,2],kType=kType,WIN=WIN,h=pilotH,both=F)$qhz
 			}
 		} else {
 			pilot.ppp <- ppp(x=data[,1],y=data[,2],window=WIN,check=F)
-			pilot.density <- density(pilot.ppp,sigma=pilotH,xy=datarange.list,weights=rep(1/pilot.ppp$n,pilot.ppp$n),edge=edgeCorrect)
+			pilot.density <- density(pilot.ppp,sigma=pilotH,xy=datarange.list,weights=counts*rep(1/n,nrow(data)),edge=edgeCorrect)
 			
 			corrGridSpec <- apply(data,1,getNearest,gridx=xdatarange,gridy=ydatarange,WIN=WIN)
 			total_pilot_f_values <- as.vector(pilot.density$v)
@@ -146,9 +173,9 @@ bivariate.density <- function(data, ID = NULL, pilotH, globalH = pilotH, adaptiv
 		if(!is.null(atExtraCoords)){
 			if(!use.ppp.methods){
 				if(edgeCorrect){
-					extra_pilot_f_values <- apply(as.matrix(atExtraCoords),1,KSPEC,data=data,h=pilotH,type=kType)/getQhz_Fixed(Xseq=atExtraCoords[,1],Yseq=atExtraCoords[,2],kType=kType,WIN=WIN,h=pilotH,both=F)$qhz
+					extra_pilot_f_values <- apply(as.matrix(atExtraCoords),1,KSPEC,data=data,h=pilotH,type=kType,counts=counts)/getQhz_Fixed(Xseq=atExtraCoords[,1],Yseq=atExtraCoords[,2],kType=kType,WIN=WIN,h=pilotH,both=F)$qhz
 				} else {
-					extra_pilot_f_values <- apply(as.matrix(atExtraCoords),1,KSPEC,data=data,h=pilotH,type=kType)
+					extra_pilot_f_values <- apply(as.matrix(atExtraCoords),1,KSPEC,data=data,h=pilotH,type=kType,counts=counts)
 				}
 			} else {
 				corrGridExtra <- apply(atExtraCoords,1,getNearest,gridx=xdatarange,gridy=ydatarange,WIN=WIN)
@@ -179,10 +206,10 @@ bivariate.density <- function(data, ID = NULL, pilotH, globalH = pilotH, adaptiv
 		}
 
     } else {
-        h <- rep(pilotH,n)
+        h <- rep(pilotH,nrow(data))
 		if(use.ppp.methods){
 			if(comment) cat("calculating density and edge-correcting if elected...\n")
-			ppp.den.QEX <- run_ppp(data,datarange.list,pilotH,WIN)
+			ppp.den.QEX <- run_ppp(data,datarange.list,pilotH,WIN,counts)
 			corrGridSpec <- apply(data,1,getNearest,gridx=xdatarange,gridy=ydatarange,WIN=WIN)
 			if(!is.null(atExtraCoords))	corrGridExtra <- apply(atExtraCoords,1,getNearest,gridx=xdatarange,gridy=ydatarange,WIN=WIN)
 			
@@ -211,7 +238,7 @@ bivariate.density <- function(data, ID = NULL, pilotH, globalH = pilotH, adaptiv
 				extra[extra<=0] <- NA
 			}
 			
-			result <- list(	Zm=Zmat,
+			result <- list(	Zm=nfac*Zmat,
 						X=xrg,
 						Y=yrg,
 						kType=kType,
@@ -220,14 +247,15 @@ bivariate.density <- function(data, ID = NULL, pilotH, globalH = pilotH, adaptiv
 						globalH=NA,
 						hypoH=NA,
 						#zVec=surfA,
-						zSpec=raw.v[corrGridSpec]/qhzSpec,
-						zExtra=extra,
+						zSpec=nfac*raw.v[corrGridSpec]/qhzSpec,
+						zExtra=nfac*extra,
 						WIN=WIN,
 						qhz=matrix(edg.v,res,res,byrow=T),
 						qhzSpec=qhzSpec,
 						qhzExtra=qhzExtra,
 						pilotvals=NA,
 						gamma=NA,
+						counts=counts,
 						data=data)	
 			class(result) <- "bivden"
 			if(comment) print(date())
@@ -237,12 +265,12 @@ bivariate.density <- function(data, ID = NULL, pilotH, globalH = pilotH, adaptiv
     }
 
 	if(comment) cat("calculating density and edge-correcting if elected...\n")
-    surfA <- apply(as.matrix(datarange),1,compute.coord,data=data,h=h,n=n,WIN=WIN,type=kType)
-    surfB <- apply(as.matrix(data),1,compute.coord,data=data,h=h,n=n,WIN=WIN,type=kType)
+    surfA <- apply(as.matrix(datarange),1,compute.coord,data=data,h=h,n=n,WIN=WIN,type=kType,counts=counts)
+    surfB <- apply(as.matrix(data),1,compute.coord,data=data,h=h,n=n,WIN=WIN,type=kType,counts=counts)
     surfC <- NA
 	QC <- list(qhz=NA,qhz_sq=NA)
     if(!is.null(atExtraCoords)){
-		surfC <- apply(as.matrix(atExtraCoords),1,compute.coord,data=data,h=h,n=n,WIN=WIN,type=kType)
+		surfC <- apply(as.matrix(atExtraCoords),1,compute.coord,data=data,h=h,n=n,WIN=WIN,type=kType,counts=counts)
 		QC <- list(qhz=1,qhz_sq=1)
 	}
 
@@ -252,7 +280,7 @@ bivariate.density <- function(data, ID = NULL, pilotH, globalH = pilotH, adaptiv
 	if(edgeCorrect&&adaptive&&use.ppp.methods){
 		hypoQuan <- unique(quantile(hypoH,(1:100)/100,na.rm=T))
 		corrQuan <- apply(as.matrix(hypoH),1,idQuan,q=hypoQuan)
-		qQuan <- apply(as.matrix(hypoQuan),1,run_ppp,data=data,xy=datarange.list,WIN=WIN)
+		qQuan <- apply(as.matrix(hypoQuan),1,run_ppp,data=data,xy=datarange.list,WIN=WIN,counts=counts)
 		qhz <- rep(-1,res*res)
 		qhz[is.na(hypoH)] <- NA
 		for(i in 1:length(hypoQuan)) qhz[which(corrQuan==i)] <- as.vector(qQuan[[i]]$edg$v)[which(corrQuan==i)]
@@ -272,7 +300,7 @@ bivariate.density <- function(data, ID = NULL, pilotH, globalH = pilotH, adaptiv
 		
 		if(comment) cat("returning...\n\n")
 		
-		result <- list(	Zm=matrix(surfA,res,res,byrow=T),
+		result <- list(	Zm=nfac*matrix(surfA,res,res,byrow=T),
 					X=xrg,
 					Y=yrg,
 					kType=kType,
@@ -281,14 +309,15 @@ bivariate.density <- function(data, ID = NULL, pilotH, globalH = pilotH, adaptiv
 					globalH=globalH,
 					hypoH=matrix(hypoH,res,res,byrow=T),
 					#zVec=surfA,
-					zSpec=surfB,
-					zExtra=surfC,
+					zSpec=nfac*surfB,
+					zExtra=nfac*surfC,
 					WIN=WIN,
 					qhz=matrix(qhz,res,res,byrow=T),
 					qhzSpec=qhzSpec,
 					qhzExtra=qhzExtra,
 					pilotvals=spec_pilot_f_values,
 					gamma=gamma,
+					counts=counts,
 					data=data)	
 		class(result) <- "bivden"
 		if(comment) print(date())
@@ -296,7 +325,7 @@ bivariate.density <- function(data, ID = NULL, pilotH, globalH = pilotH, adaptiv
 	} else {
 		if(edgeCorrect){
 			datarangeA <- as.matrix(data.frame(cbind(1:nrow(datarange),hypoH)))
-			datarangeB <- as.matrix(data.frame(cbind(1:n,h)))
+			datarangeB <- as.matrix(data.frame(cbind(1:nrow(data),h)))
 
 			if(adaptive){
 				datarangeA <- as.matrix(data.frame(cbind(xdatarange,ydatarange,hypoH)))
@@ -338,7 +367,7 @@ bivariate.density <- function(data, ID = NULL, pilotH, globalH = pilotH, adaptiv
 		hypoH <- matrix(hypoH,res,res,byrow=T)
 	}
 	
-    result <- list(Zm=Zm,
+    result <- list(Zm=nfac*Zm,
                 X=xrg,
                 Y=yrg,
                 kType=kType,
@@ -347,14 +376,15 @@ bivariate.density <- function(data, ID = NULL, pilotH, globalH = pilotH, adaptiv
                 globalH=globalH,
                 hypoH=hypoH,
                 #zVec=surfA,
-                zSpec=surfB,
-                zExtra=surfC,
+                zSpec=nfac*surfB,
+                zExtra=nfac*surfC,
                 WIN=WIN,
                 qhz=matrix(QA$qhz,res,res,byrow=T),
                 qhzSpec=QB$qhz,
                 qhzExtra=QC$qhz,
                 pilotvals=spec_pilot_f_values,
                 gamma=gamma,
+				counts=counts,
                 data=data)
 	class(result) <- "bivden"
 	return(result)

@@ -5,7 +5,7 @@
 \alias{rrs}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-Bivariate relative risk surfaces
+Bivariate relative risk function
 }
 \description{
 Estimates a relative risk function based on the ratio of two bivariate kernel density estimates over identical grids and regions. In geographical epidemiology, the two densities would represent a set of disease cases (numerator) and a sample of controls illustrating the at-risk population (denominator).
@@ -43,7 +43,7 @@ Ignored if \code{f} and \code{g} are already \code{"bivden"} objects OR objects 
 Ignored if \code{f} and \code{g} are already \code{"bivden"} objects. A boolean value specifying whether or not to calculate a corresponding asymptotic p-value surface (for tolerance contours) for the estimated relative risk function. If \code{TRUE}, the p-value surface tests for elevated risk only (equivalent to setting \code{test = "greater"} in \code{\link{tolerance}}) and is evaluated over a maximum grid resolution of 50 by 50. Defaults to \code{FALSE} for computational reasons.
 }
   \item{plotit}{
-Boolean. If \code{TRUE} (default), a heatplot of the estimated relative risk function is produced. If \code{tolerate = TRUE}, asymptotic tolerance contours are automatically added to the plot at an empirical significance level of 5\%.
+Boolean. If \code{TRUE} (default), a heatplot of the estimated relative risk function is produced. If \code{tolerate = TRUE}, asymptotic tolerance contours are automatically added to the plot at a significance level of 5\%.
 
 }
   \item{comment}{
@@ -51,9 +51,9 @@ Ignored if \code{f} and \code{g} are already \code{"bivden"} objects. Boolean. W
 }
 }
 \details{
-This function estimates a relative risk function via the density ratio method using fixed or adaptive bandwidth bivariate kernel density estimates. Both densities must be estimated using the same evaluation grid (and the same study window) in \code{\link{bivariate.density}}. In geographical epidemiology, the argument \code{f} represents the spatial distribution of the disease cases, and \code{g} the at-risk (control) population.\cr
+This function estimates a relative risk function via the density ratio method using fixed or adaptive bandwidth bivariate kernel density estimates. Both densities must be estimated using the same evaluation grid (and the same study window) in \code{\link{bivariate.density}}. In geographical epidemiology, the argument \code{f} represents the spatial distribution of the disease cases, and \code{g} the at-risk (control) population.
 
-The option to supply the raw case and control data is available. If this is done, the function runs \code{\link{bivariate.density}} internally, abstracting certain decisions about the density estimation away from the user. If the user sets \code{adaptive = TRUE} (and \code{h} remains at \code{NULL}), the smoothing parameters are calculated as per the approach taken in Davies and Hazelton (2010): a common global bandwidth using the pooled data from \code{\link{OS}}, and differing pilot bandwidths using \code{\link{CV.sm}} on the case and control data separately. The scaling parameter \code{gamma} is common for the case and control density estimates, set as the \code{gamma} component of the pooled estimate. If a fixed relative risk is desired (\code{adaptive = FALSE}) and no specific bandwidths are given via the argument \code{h}, the case and control densities share a common bandwidth computed from the pooled data using \code{\link{OS}}. In supplying raw data to \code{\link{risk}}, the user must also specify an evaluation grid resolution (defaulting to 50 by 50) and the study region \code{WIN} (unless \code{f} and \code{g} are objects of class \code{\link[spatstat]{ppp}}, in which case the resident \code{window} component overrides \code{WIN}). All other arguments are set to their defaults as in \code{\link{bivariate.density}}.\cr
+The option to supply the raw case and control data is available. If this is done, the function runs \code{\link{bivariate.density}} internally, abstracting certain decisions about the density estimation away from the user. If the user sets \code{adaptive = TRUE} (and \code{h} remains at \code{NULL}), the smoothing parameters are calculated as per the approach taken in Davies and Hazelton (2010): a common global bandwidth using the pooled data from \code{\link{OS}}, and differing pilot bandwidths using \code{\link{CV.sm}} on the case and control data separately. The scaling parameter \code{gamma} is common for the case and control density estimates, set as the \code{gamma} component of the pooled estimate. If a fixed relative risk is desired (\code{adaptive = FALSE}) and no specific bandwidths are given via the argument \code{h}, the case and control densities share a common bandwidth computed from the pooled data using \code{\link{OS}}. In supplying raw data to \code{\link{risk}}, the user must also specify an evaluation grid resolution (defaulting to 50 by 50) and the study region \code{WIN} (unless \code{f} and \code{g} are objects of class \code{\link[spatstat]{ppp}}, in which case the resident \code{window} component overrides \code{WIN}). All other arguments are set to their defaults as in \code{\link{bivariate.density}}.
 
 If more flexibility is required for estimation of the case and control densities, the user must supply `pre-calculated' objects of class \code{"bivden"} (from \code{\link{bivariate.density}}) as the \code{f} and \code{g} arguments. This drastically reduces the running time of a call to \code{\link{risk}} (as the density estimation step is already complete). However, the option of internally computing the asymptotic p-value surfaces (via the argument \code{tolerate}) is unavailable in this case; the user must run the \code{\link{tolerance}} function separately if tolerance contours are desired.
 
@@ -61,7 +61,7 @@ The relative risk function is defined here as the ratio of the `case' density to
 \cr\cr
 \emph{r}\code{ = (f + delta*max(g))/(g + delta*max(g))}
 \cr\cr
-Note the (optional) additive constants defined by \code{delta} times the maximum of each of the densities in the numerator and denominator respectively (see Bowman and Azzalini, 1997).\cr
+Note the (optional) additive constants defined by \code{delta} times the maximum of each of the densities in the numerator and denominator respectively (see Bowman and Azzalini, 1997).
 
 The log-risk function \emph{rho}, given by \emph{rho} = log[\emph{r}], is argued to be preferable in practice as it imparts a sense of symmetry in the way the case and control densities are treated (Kelsall and Diggle, 1995a;b). The option of log-transforming the returned risk function is therefore selected by default.
 }
@@ -80,7 +80,7 @@ An object of class \code{"rrs"}. This is a marked list with the following compon
 Bithell, J.F. (1990), An application of density estimation to geographical epidemiology, \emph{Statistics in Medicine}, \bold{9}, 691-701.\cr\cr
 Bithell, J.F. (1991), Estimation of relative risk functions, \emph{Statistics in Medicine}, \bold{10}, 1745-1751.\cr\cr
 Bowman, A.W. and Azzalini A. (1997), \emph{Applied Smoothing Techniques for Data Analysis: The Kernel Approach with S-Plus Illustrations}, Oxford University Press Inc., New York.\cr\cr
-Davies, T.M. and Hazelton, M.L. (2010), Adaptive kernel estimation of spatial relative risk, \emph{Submitted for publication}.\cr\cr
+Davies, T.M. and Hazelton, M.L. (2010), Adaptive kernel estimation of spatial relative risk, \emph{Statistics in Medicine}, in press [accepted 20 May 2010].\cr\cr
 Diggle, P.J. (1985), A kernel method for smoothing point process data, \emph{Journal of the Royal Statistical Society Series C}, \bold{34}(2), 138-147.\cr\cr
 Kelsall, J.E. and Diggle, P.J. (1995a), Kernel estimation of relative risk, \emph{Bernoulli}, \bold{1}, 3-16.\cr\cr
 Kelsall, J.E. and Diggle, P.J. (1995b), Non-parametric estimation of spatial variation in relative risk, \emph{Statistics in Medicine}, \bold{14}, 2335-2342.

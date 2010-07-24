@@ -12,8 +12,8 @@ Provides functions to estimate fixed and adaptive kernel-smoothed relative risk 
 \details{
 \tabular{ll}{
 Package: \tab sparr\cr
-Version: \tab 0.1-7\cr
-Date: \tab 2010-04-13\cr
+Version: \tab 0.2-1\cr
+Date: \tab 2010-07-18\cr
 License: \tab GPL (>= 2) \cr
 }
 
@@ -38,7 +38,7 @@ The content of \code{sparr} can be broken up as follows:\cr
 \emph{Printing and summarising objects}\cr
 \code{S3} methods (\code{\link{print.bivden}}, \code{\link{print.rrs}}, \code{\link{summary.bivden}} and \code{\link{summary.rrs}}) are available for the bivariate density and risk function objects.\cr\cr
 \emph{Visualisation}\cr
-Most applications of the relative risk function in practice require plotting the relative risk within the study region (especially for an inspection of asymptotic tolerance contours). To this end, \code{\link{sparr}} provides a number of different ways to achieve attractive and flexible visualisation. The user may produce a heat plot, a perspective plot, a contour plot, or an interactive 3D perspective plot (that the user can pan around and zoom - courtesy of the powerful \code{\link[rgl]{rgl}} package; see below) for either an estimated relative risk function or a bivariate density estimate. These capabilities are available through \code{S3} support of the \code{plot} function; see\cr
+Most applications of the relative risk function in practice require plotting the relative risk within the study region (especially for an inspection of tolerance contours). To this end, \code{\link{sparr}} provides a number of different ways to achieve attractive and flexible visualisation. The user may produce a heat plot, a perspective plot, a contour plot, or an interactive 3D perspective plot (that the user can pan around and zoom - courtesy of the powerful \code{\link[rgl]{rgl}} package; see below) for either an estimated relative risk function or a bivariate density estimate. These capabilities are available through \code{S3} support of the \code{plot} function; see\cr
 \code{\link{plot.bivden}} for visualising a single bivariate density estimate from \code{\link{bivariate.density}}, and\cr
 \code{\link{plot.rrs}} for visualisation of an estimated relative risk function from \code{\link{risk}}.
 }
@@ -55,12 +55,13 @@ T.M. Davies, M.L. Hazelton and J.C. Marshall\cr
 Institute of Fundamental Sciences - Statistics, Massey University, Palmerston North, New Zealand.\cr
 
 Maintainer: T.M.D. \email{t.davies@massey.ac.nz}\cr
+Feedback welcomed.
 }
-%\section{Acknowledgements}{
-%-whoever invented beer\cr
-%-arnold schwarzenegger\cr
-%-martins not a bad supervisor, eh bro
-%}
+\section{Citation}{
+To cite use of \code{sparr}, the user may refer to the following work currently in press:\cr
+Davies, T.M., Hazelton, M.L. and Marshall, J.C. (2010), \code{sparr}: Analyzing spatial relative risk using fixed and adaptive kernel density estimation in \code{R}, \emph{Journal of Statistical Software} [in press].
+
+}
 \references{
 Abramson, I. (1982), On bandwidth variation in kernel estimates --- a square root law, \emph{Annals of Statistics}, \bold{10}(4), 1217-1223.\cr\cr
 Adler, D. and Murdoch, D. (2009), rgl: 3D visualization device system (OpenGL). R package version 0.87; URL: http://CRAN.R-project.org/package=rgl\cr\cr
@@ -69,7 +70,7 @@ Bithell, J.F. (1990), An application of density estimation to geographical epide
 Bithell, J.F. (1991), Estimation of relative risk function,. \emph{Statistics in Medicine}, \bold{10}, 1745-1751.\cr\cr
 Bowman, A.W. and Azzalini, A. (1997), \emph{Applied Smoothing Techniques for Data Analysis: The Kernel Approach with S-Plus Illustrations.} Oxford University Press Inc., New York. ISBN 0-19-852396-3.\cr\cr
 Bowman, A.W. and Azzalini, A. (2010), R package 'sm': nonparametric smoothing methods (version 2.2-4), URL: http://www.stats.gla.ac.uk/~adrian/sm; http://azzalini.stat.unipd.it/Book_sm\cr\cr
-Davies, T.M. and Hazelton, M.L. (2010), Adaptive kernel estimation of spatial relative risk, \emph{Submitted for publication}.\cr\cr
+Davies, T.M. and Hazelton, M.L. (2010), Adaptive kernel estimation of spatial relative risk, \emph{Statistics in Medicine}, in press [accepted 20 May 2010]\cr\cr
 Hazelton, M.L. and Davies, T.M. (2009), Inference based on kernel estimates of the relative risk function in geographical epidemiology, \emph{Biometrical Journal}, \bold{51}(1), 98-109.\cr\cr
 Prince, M. I., Chetwynd, A., Diggle, P. J., Jarner, M., Metcalf, J. V. and James, O. F. W. (2001), The geographical distribution of primary biliary cirrhosis in a well-defined cohort, \emph{Hepatology} \bold{34}, 1083-1088.\cr\cr
 Sabel, C. E., Gatrell, A. C., Loytonenc, M., Maasiltad, P. and Jokelainene, M. (2000), Modelling exposure opportunitites: estimating relative risk for motor disease in Finland, \emph{Social Science & Medicine} \bold{50}, 1121-1137.\cr\cr

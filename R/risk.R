@@ -96,10 +96,9 @@ risk <- function(f, g, delta = 0, log = TRUE, h = NULL, adaptive = FALSE, res = 
 	
 	if(edgef+edgeg==1) stop("edge-correction is inconsistent. both densities must be either edge-corrected or not.")
 	
-	gamCase <- delta*max(fvec[!is.na(fvec)])
-    gamCon <- delta*max(gvec[!is.na(gvec)])
+	gamCon <- delta*max(gvec[!is.na(gvec)])
     
-    rhohatVec <- (fvec+gamCase)/(gvec+gamCon)
+    rhohatVec <- (fvec+gamCon)/(gvec+gamCon)
     rhohatVec[rhohatVec==0] <- NA
     if(log) rhohatVec <- log(rhohatVec)
     rhohatM <- matrix(rhohatVec,length(f$X),length(f$Y),byrow=T)
