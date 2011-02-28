@@ -33,7 +33,7 @@ A single numeric value of the estimated bandwidth.
 }
 
 \references{
-Davies, T.M. and Hazelton, M.L. (2010), Adaptive kernel estimation of spatial relative risk, \emph{Statistics in Medicine}, in press [accepted 20 May 2010].\cr\cr
+Davies, T.M. and Hazelton, M.L. (2010), Adaptive kernel estimation of spatial relative risk, \emph{Statistics in Medicine}, \bold{29}(23) 2423-2437.\cr\cr
 Terrell, G.R. (1990), The maximal smoothing principle in density estimation, \emph{Journal of the American Statistical Association}, \bold{85}, 470-477.
 }
 \author{

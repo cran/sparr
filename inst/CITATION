@@ -1,28 +1,21 @@
-citHeader("To cite", sQuote("sparr"), "in publications, please use:")
+citHeader("To cite sparr in publications use:")
 
-citEntry(entry = "article",
-         title = "sparr: Analyzing spatial relative risk using using fixed and adaptive kernel density estimation in R",
-         author = personList(
-           as.person("T.M. Davies"), 
-           as.person("M.L. Hazelton"),
-		   as.person("J.C. Marshall")
-           ),
-         journal = "Journal of Statistical Software",
-         volume= "",
-         number = "",
-         pages = "",
-		 note = "In press",
-         year  = "2010",
-         url   = "",
-	 textVersion = paste(
-		"T.M. Davies, M.L. Hazelton and J.C. Marshall (2010).",
-		"sparr: Analyzing spatial relative risk using using fixed and adaptive kernel density estimation in R,",
-	        "Journal of Statistical Software",
-         	"[in press]",
-	        "")
-         )
+citEntry(entry = "Article",
+  title        = "{sparr}: Analyzing Spatial Relative Risk Using Fixed and Adaptive Kernel Density Estimation in {R}",
+  author       = personList(as.person("Tilman M. Davies"),
+                   as.person("Martin L. Hazelton"),
+                   as.person("Jonathan C. Marshall")),
+  journal      = "Journal of Statistical Software",
+  year         = "2011",
+  volume       = "39",
+  number       = "1",
+  pages        = "1--14",
+  url          = "http://www.jstatsoft.org/v39/i01/",
 
+  textVersion  =
+  paste("Tilman M. Davies, Martin L. Hazelton, Jonathan C. Marshall (2011).",
+        "sparr: Analyzing Spatial Relative Risk Using Fixed and Adaptive Kernel Density Estimation in R.",
+        "Journal of Statistical Software, 39(1), 1-14.",
+        "URL http://www.jstatsoft.org/v39/i01/.")
+)
 
-citFooter("For references to additional papers describing the use of",
-          sQuote("sparr"),
-	  "see", sQuote("help(\"sparr\")."))

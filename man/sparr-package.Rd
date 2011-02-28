@@ -12,8 +12,8 @@ Provides functions to estimate fixed and adaptive kernel-smoothed relative risk 
 \details{
 \tabular{ll}{
 Package: \tab sparr\cr
-Version: \tab 0.2-1\cr
-Date: \tab 2010-07-18\cr
+Version: \tab 0.2-2\cr
+Date: \tab 2011-02-28\cr
 License: \tab GPL (>= 2) \cr
 }
 
@@ -58,8 +58,8 @@ Maintainer: T.M.D. \email{t.davies@massey.ac.nz}\cr
 Feedback welcomed.
 }
 \section{Citation}{
-To cite use of \code{sparr}, the user may refer to the following work currently in press:\cr
-Davies, T.M., Hazelton, M.L. and Marshall, J.C. (2010), \code{sparr}: Analyzing spatial relative risk using fixed and adaptive kernel density estimation in \code{R}, \emph{Journal of Statistical Software} [in press].
+To cite use of \code{sparr}, the user may refer to the following work:\cr
+Davies, T.M., Hazelton, M.L. and Marshall, J.C. (2011), \code{sparr}: Analyzing spatial relative risk using fixed and adaptive kernel density estimation in \code{R}, \emph{Journal of Statistical Software} \bold{39}(1), 1-14.
 
 }
 \references{
@@ -70,7 +70,7 @@ Bithell, J.F. (1990), An application of density estimation to geographical epide
 Bithell, J.F. (1991), Estimation of relative risk function,. \emph{Statistics in Medicine}, \bold{10}, 1745-1751.\cr\cr
 Bowman, A.W. and Azzalini, A. (1997), \emph{Applied Smoothing Techniques for Data Analysis: The Kernel Approach with S-Plus Illustrations.} Oxford University Press Inc., New York. ISBN 0-19-852396-3.\cr\cr
 Bowman, A.W. and Azzalini, A. (2010), R package 'sm': nonparametric smoothing methods (version 2.2-4), URL: http://www.stats.gla.ac.uk/~adrian/sm; http://azzalini.stat.unipd.it/Book_sm\cr\cr
-Davies, T.M. and Hazelton, M.L. (2010), Adaptive kernel estimation of spatial relative risk, \emph{Statistics in Medicine}, in press [accepted 20 May 2010]\cr\cr
+Davies, T.M. and Hazelton, M.L. (2010), Adaptive kernel estimation of spatial relative risk, \emph{Statistics in Medicine}, \bold{29}(23) 2423-2437.\cr\cr
 Hazelton, M.L. and Davies, T.M. (2009), Inference based on kernel estimates of the relative risk function in geographical epidemiology, \emph{Biometrical Journal}, \bold{51}(1), 98-109.\cr\cr
 Prince, M. I., Chetwynd, A., Diggle, P. J., Jarner, M., Metcalf, J. V. and James, O. F. W. (2001), The geographical distribution of primary biliary cirrhosis in a well-defined cohort, \emph{Hepatology} \bold{34}, 1083-1088.\cr\cr
 Sabel, C. E., Gatrell, A. C., Loytonenc, M., Maasiltad, P. and Jokelainene, M. (2000), Modelling exposure opportunitites: estimating relative risk for motor disease in Finland, \emph{Social Science & Medicine} \bold{50}, 1121-1137.\cr\cr
