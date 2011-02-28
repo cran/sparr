@@ -107,7 +107,7 @@ An object of class \code{"bivden"}. This is effectively a list with the followin
 }
 \references{
 Abramson, I. (1982). On bandwidth variation in kernel estimates --- a square root law, \emph{Annals of Statistics}, \bold{10}(4), 1217-1223.\cr\cr
-Davies, T.M. and Hazelton, M.L. (2010), Adaptive kernel estimation of spatial relative risk, \emph{Statistics in Medicine}, in press [accepted 20 May 2010].\cr\cr
+Davies, T.M. and Hazelton, M.L. (2010), Adaptive kernel estimation of spatial relative risk, \emph{Statistics in Medicine}, \bold{29}(23) 2423-2437.\cr\cr
 Diggle, P.J. (1985), A kernel method for smoothing point process data, \emph{Journal of the Royal Statistical Society, Series C}, \bold{34}(2), 138-147.\cr\cr
 Marshall, J.C. and Hazelton, M.L. (2010) Boundary kernels for adaptive density estimators on regions with irregular boundaries, \emph{Journal of Multivariate Analysis}, \bold{101}, 949-963.\cr\cr
 Silverman, B.W. (1986), \emph{Density Estimation for Statistics and Data Analysis}, Chapman & Hall, New York. \cr\cr

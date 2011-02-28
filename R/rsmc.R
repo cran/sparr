@@ -22,6 +22,7 @@ rsmc <- function(object,pooled,ITER,corrgrid,comment){
 	mcmat_upper <- matrix(1,res,res)
 	#mcmat_lower <- matrix(1,res,res)
 	
+	
 	if(comment) cat("\nMonte-Carlo iteration no.\n")
 	for(i in 1:(ITER-1)){
 		if(comment){
@@ -36,7 +37,7 @@ rsmc <- function(object,pooled,ITER,corrgrid,comment){
 		condens <- bivariate.density(data=datapool[contemp,],pilotH=pilotH_g,globalH=globalH_g,adaptive=adaptive,res=res,WIN=WIN,gamma=pooled$gamma,comment=F)
 		
 		risktemp <-risk(casedens,condens,log=object$log,plotit=F)$rsM
-		
+			
 		mcmat_upper <- mcmat_upper+(risktemp>=rmat)
 		#mcmat_lower <- mcmat_lower+(risktemp<=rmat)
 	}

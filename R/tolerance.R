@@ -42,6 +42,7 @@ tolerance <- function(rs, pooled, test = "upper", method = "ASY", reduce = 1, IT
 		corrGridSpec <- apply(as.matrix(data.frame(cbind(grx,gry))),1,getNearest,gridx=sort(rep(rs$f$X,length(rs$f$X))),gridy=rep(rs$f$Y,length(rs$f$Y)),WIN=rs$f$WIN,anypoint=T)
 	}
 
+
 	if(method=="ASY"){
 
 		datarange.list <- list(x=seq(xr[1],xr[2],length=gsize),y=seq(yr[1],yr[2],length=gsize))
@@ -91,7 +92,9 @@ tolerance <- function(rs, pooled, test = "upper", method = "ASY", reduce = 1, IT
 						}
 						fL2 <- append(fL2,tempLsq)
 					}		
+					
 					S1rzK <- (1/(as.vector(t(rs$f$qhz))[corrGridSpec]^2))*(2*fk2 + 0.25*fL2)
+				
 					
 					
 					if(comment) cat("--g--\n\n")
@@ -110,6 +113,10 @@ tolerance <- function(rs, pooled, test = "upper", method = "ASY", reduce = 1, IT
 						gL2 <- append(gL2,tempLsq)
 					}
 					S2rzK <- (1/(as.vector(t(rs$g$qhz))[corrGridSpec]^2))*(2*gk2 + 0.25*gL2)
+				
+					
+					
+					
 				} else {
 					if(comment) cat("calculating integrals L2...\n--f--\n")
 					S1rzK <- (1/(as.vector(t(rs$f$qhz))[corrGridSpec]^2))*(2*fk2 + .5*fk2)
@@ -122,7 +129,6 @@ tolerance <- function(rs, pooled, test = "upper", method = "ASY", reduce = 1, IT
 				if(comment) cat("\n--Fixed-bandwidth asymptotics--\n")
 				if(comment) cat("calculating integrals K2...")
 			
-				#k2fix <- getQhz_Fixed(grx,gry,"gaus",pooled$WIN,pooled$pilotH,F,T)$qhz_sq
 				k2fix <- (1/(4*pi))*as.vector(run_ppp(data=pooled$data,xy=datarange.list,h=(sqrt(0.5*pooled$pilotH^2)),WIN=pooled$WIN,counts=pooled$counts)$edg$v)
 				
 				if(comment) cat("done.\n\n")
@@ -131,7 +137,6 @@ tolerance <- function(rs, pooled, test = "upper", method = "ASY", reduce = 1, IT
 				denominator <- sqrt(RrzK*(sum(rs$f$counts)^(-1)+sum(rs$g$counts)^(-1)))/(h*sqrt(as.vector(t(pooled$Zm)))[corrGridSpec])
 			}
 		} else {
-			#warning("densities have not been edge-corrected. additional computation time required for components.")
 			
 			if(adaptive){
 				if(comment) cat("\n--Adaptive-bandwidth asymptotics--\n")

@@ -80,7 +80,7 @@ An object of class \code{"rrs"}. This is a marked list with the following compon
 Bithell, J.F. (1990), An application of density estimation to geographical epidemiology, \emph{Statistics in Medicine}, \bold{9}, 691-701.\cr\cr
 Bithell, J.F. (1991), Estimation of relative risk functions, \emph{Statistics in Medicine}, \bold{10}, 1745-1751.\cr\cr
 Bowman, A.W. and Azzalini A. (1997), \emph{Applied Smoothing Techniques for Data Analysis: The Kernel Approach with S-Plus Illustrations}, Oxford University Press Inc., New York.\cr\cr
-Davies, T.M. and Hazelton, M.L. (2010), Adaptive kernel estimation of spatial relative risk, \emph{Statistics in Medicine}, in press [accepted 20 May 2010].\cr\cr
+Davies, T.M. and Hazelton, M.L. (2010), Adaptive kernel estimation of spatial relative risk, \emph{Statistics in Medicine}, \bold{29}(23) 2423-2437.\cr\cr
 Diggle, P.J. (1985), A kernel method for smoothing point process data, \emph{Journal of the Royal Statistical Society Series C}, \bold{34}(2), 138-147.\cr\cr
 Kelsall, J.E. and Diggle, P.J. (1995a), Kernel estimation of relative risk, \emph{Bernoulli}, \bold{1}, 3-16.\cr\cr
 Kelsall, J.E. and Diggle, P.J. (1995b), Non-parametric estimation of spatial variation in relative risk, \emph{Statistics in Medicine}, \bold{14}, 2335-2342.
