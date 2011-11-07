@@ -142,8 +142,8 @@ plot(ch.lar.density, col = "lightblue", phi = 30, theta = -30,
 
 ##PBC liver disease data
 data(PBC)
-pbc.adaptive.density <- bivariate.density(data = PBC$data, ID = 1,
- pilotH = 350, WIN = PBC$owin)
+pbc.adaptive.density <- bivariate.density(data = PBC, ID = "case",
+ pilotH = 350)
 
 #3D plot - may need to adjust size of RGL device. Hold left click
 # to pan, hold right to zoom.

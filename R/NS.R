@@ -1,5 +1,5 @@
-CV.sm <- function(data){
-	if(class(data)=="data.frame"){
+NS <- function(data, nstar = NULL, scaler = NA){
+    if(class(data)=="data.frame"){
 		if(ncol(data)!=2) stop("data.frame must have exactly two columns")
 		if(nrow(data)<10) warning("less than 10 observations!")
 	} else if(class(data)=="list"){
@@ -18,7 +18,18 @@ CV.sm <- function(data){
 	} else {
 		stop("data must be an object of type 'data.frame', 'list', 'matrix', or 'ppp'")
 	}
+		
+	if(is.null(nstar)) n <- nrow(data)
+	else n <- nstar
 	
-	result <- h.select(x=as.matrix(data),method="cv",structure.2d="common")[1]
-	return(result)
+	if(n<=0) stop("'nstar' must be positive")
+	if(!is.na(scaler)){
+		if(scaler<=0) stop("'scaler' must be positive")
+	}
+	
+	if(is.na(scaler)) U <- mean(c(IQR(data[,1])/1.34,IQR(data[,2])/1.34))
+	else U <- scaler
+    	
+    hNS <- U*((1/(2*n))^(1/6))
+    return(hNS)
 }
