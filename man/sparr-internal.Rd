@@ -14,6 +14,8 @@
 \alias{KBivN_OPT}
 \alias{KERNEL}
 \alias{KSPEC}
+\alias{LSCV.density.single}
+\alias{LSCV.risk.single}
 \alias{Lsq}
 \alias{nearestBC_Vals}
 \alias{run_ppp}
@@ -22,7 +24,7 @@
 Internal sparr functions
 }
 \description{
-Internal sparr functions, usually not to be called by the user.
+Internal sparr functions, only meant to be accessed by the user directly in a life-threatening situation. Email me.
 }
 \section{Usage}{
 
@@ -39,6 +41,8 @@ Internal sparr functions, usually not to be called by the user.
 \code{KBivN_OPT(x,WIN=NULL,mu=c(0,0),Sigma=matrix(c(1,0,0,1),2,2),sq=F,forSimul=F,y=NULL)}\cr
 \code{KERNEL(X,type,dim=2,Qcomp="spher")}\cr
 \code{KSPEC(location,data,h,type,counts)}\cr
+\code{LSCV.density.single(h,data.ppp,res,edge,inside,ERRV=1000000)}\cr
+\code{LSCV.risk.single(h,cases,controls,method,res,edge,inside,ERRV=1000000)}\cr
 \code{Lsq(x,uh,WIN)}\cr
 \code{nearestBC_Vals(framevals,WIN)}\cr
 \code{rsmc(object,pooled,ITER,corrgrid,comment)}\cr
@@ -49,3 +53,5 @@ Internal sparr functions, usually not to be called by the user.
 
 }
 \keyword{internal}
+
+\author{T.M. Davies}

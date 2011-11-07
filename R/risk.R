@@ -64,9 +64,10 @@ risk <- function(f, g, delta = 0, log = TRUE, h = NULL, adaptive = FALSE, res = 
 		}
 		
 		if(adaptive){
-			hp <- CV.sm(list(x=c(f[,1],g[,1]),y=c(f[,2],g[,2])))
-			hf <- CV.sm(f)
-			hg <- CV.sm(g)
+			hp <- 0.5*h0p
+			hf <- 0.5*h01
+			hg <- 0.5*h02
+			
 			if(comment) cat("\ncalculating pooled density...\n")
 			pooled <- bivariate.density(data=list(x=c(f[,1],g[,1]),y=c(f[,2],g[,2])),pilotH=hp,globalH=h0p,adaptive=adaptive,res=res,WIN=WIN,comment=F)
 			if(comment) cat("calculating case density...\n")

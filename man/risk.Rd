@@ -8,7 +8,7 @@
 Bivariate relative risk function
 }
 \description{
-Estimates a relative risk function based on the ratio of two bivariate kernel density estimates over identical grids and regions. In geographical epidemiology, the two densities would represent a set of disease cases (numerator) and a sample of controls illustrating the at-risk population (denominator).
+Estimates a \emph{relative risk function} based on the ratio of two bivariate kernel density estimates over identical grids and regions. In geographical epidemiology, the two densities would represent a set of disease cases (numerator) and a sample of controls illustrating the at-risk population (denominator). In epidemiological terminology, the ratio of `case' to `control' would technically be referred to as an \emph{odds ratio}.
 }
 \usage{
 risk(f, g, delta = 0, log = TRUE, h = NULL, adaptive = FALSE, res = 50,
@@ -53,7 +53,7 @@ Ignored if \code{f} and \code{g} are already \code{"bivden"} objects. Boolean. W
 \details{
 This function estimates a relative risk function via the density ratio method using fixed or adaptive bandwidth bivariate kernel density estimates. Both densities must be estimated using the same evaluation grid (and the same study window) in \code{\link{bivariate.density}}. In geographical epidemiology, the argument \code{f} represents the spatial distribution of the disease cases, and \code{g} the at-risk (control) population.
 
-The option to supply the raw case and control data is available. If this is done, the function runs \code{\link{bivariate.density}} internally, abstracting certain decisions about the density estimation away from the user. If the user sets \code{adaptive = TRUE} (and \code{h} remains at \code{NULL}), the smoothing parameters are calculated as per the approach taken in Davies and Hazelton (2010): a common global bandwidth using the pooled data from \code{\link{OS}}, and differing pilot bandwidths using \code{\link{CV.sm}} on the case and control data separately. The scaling parameter \code{gamma} is common for the case and control density estimates, set as the \code{gamma} component of the pooled estimate. If a fixed relative risk is desired (\code{adaptive = FALSE}) and no specific bandwidths are given via the argument \code{h}, the case and control densities share a common bandwidth computed from the pooled data using \code{\link{OS}}. In supplying raw data to \code{\link{risk}}, the user must also specify an evaluation grid resolution (defaulting to 50 by 50) and the study region \code{WIN} (unless \code{f} and \code{g} are objects of class \code{\link[spatstat]{ppp}}, in which case the resident \code{window} component overrides \code{WIN}). All other arguments are set to their defaults as in \code{\link{bivariate.density}}.
+The option to supply the raw case and control data is available. If this is done, the function runs \code{\link{bivariate.density}} internally, abstracting certain decisions about the density estimation away from the user. If the user sets \code{adaptive = TRUE} (and \code{h} remains at \code{NULL}), the smoothing parameters are calculated as per the approach taken in Davies and Hazelton (2010): a common global bandwidth using the pooled data from \code{\link{OS}}. Pilot bandwidths are set at half the corresponding \code{\link{OS}} values. The scaling parameter \code{gamma} is common for the case and control density estimates, set as the \code{gamma} component of the pooled estimate. If a fixed relative risk is desired (\code{adaptive = FALSE}) and no specific bandwidths are given via the argument \code{h}, the case and control densities share a common bandwidth computed from the pooled data using \code{\link{OS}}. In supplying raw data to \code{\link{risk}}, the user must also specify an evaluation grid resolution (defaulting to 50 by 50) and the study region \code{WIN} (unless \code{f} and \code{g} are objects of class \code{\link[spatstat]{ppp}}, in which case the resident \code{window} component overrides \code{WIN}). All other arguments are set to their defaults as in \code{\link{bivariate.density}}.
 
 If more flexibility is required for estimation of the case and control densities, the user must supply `pre-calculated' objects of class \code{"bivden"} (from \code{\link{bivariate.density}}) as the \code{f} and \code{g} arguments. This drastically reduces the running time of a call to \code{\link{risk}} (as the density estimation step is already complete). However, the option of internally computing the asymptotic p-value surfaces (via the argument \code{tolerate}) is unavailable in this case; the user must run the \code{\link{tolerance}} function separately if tolerance contours are desired.
 
@@ -101,18 +101,17 @@ If raw data is supplied to \code{\link{risk}}, as opposed to previously computed
 %}
 \examples{
 data(PBC)
-PBC.casedata <- PBC$data[PBC$data[,3]==1,1:2]
-PBC.controldata <- PBC$data[PBC$data[,3]==0,1:2]
+PBC.casedata <- split(PBC)[[1]]
+PBC.controldata <- split(PBC)[[2]]
 
-pbc.h <- OS(PBC$data[,1:2],
- nstar = sqrt(nrow(PBC.casedata) * nrow(PBC.controldata)))
+pbc.h <- OS(PBC, nstar = sqrt(PBC.casedata$n * PBC.controldata$n))
 
-pbc.pool <- bivariate.density(data = PBC$data[,1:2], pilotH = pbc.h,
- adaptive = FALSE, WIN = PBC$owin)
-pbc.case <- bivariate.density(data = PBC.casedata, pilotH = pbc.h,
- adaptive = FALSE, WIN = PBC$owin)
-pbc.con <- bivariate.density(data = PBC.controldata, pilotH = pbc.h,
- adaptive = FALSE, WIN = PBC$owin)
+pbc.pool <- bivariate.density(data = PBC, pilotH = pbc.h, 
+ adaptive = FALSE)
+pbc.case <- bivariate.density(data = PBC.casedata, 
+ pilotH = pbc.h, adaptive = FALSE)
+pbc.con <- bivariate.density(data = PBC.controldata, 
+ pilotH = pbc.h, adaptive = FALSE)
 
 pbc.rrs <- risk(f = pbc.case, g = pbc.con, plotit = FALSE)
 summary(pbc.rrs)

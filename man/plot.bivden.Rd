@@ -64,7 +64,8 @@ T.M. Davies
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
-\code{\link{bivariate.density}, \link{risk}, \link{plot.default}, \link[spatstat]{plot.im}, \link{contour}, \link{persp}, \link[rgl]{persp3d}, \link{par}, \link[rgl]{par3d}}
+\code{\link{bivariate.density}, \link{risk}, \link{plot.default}, \link[spatstat]{plot.im}, \link{contour},}\cr
+\code{\link{persp}, \link[rgl]{persp3d}, \link{par}, \link[rgl]{par3d}}
 }
 \examples{
 ## see Examples in documentation for functions 'bivariate.density',

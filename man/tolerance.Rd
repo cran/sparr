@@ -80,7 +80,7 @@ The MC approach is provided as an option here for the sake of completeness only,
 \examples{
 
 data(chorley)
-ch.h <- CV.sm(chorley)
+ch.h <- LSCV.density(chorley, hlim = c(0.1, 2))
 
 ch.pool <- bivariate.density(data = chorley, pilotH = ch.h,
  adaptive = FALSE)
@@ -97,11 +97,11 @@ contour(ch.tol$X, ch.tol$Y, ch.tol$P, levels = 0.05, add = TRUE)
 
 \dontrun{
 data(PBC)
-PBC.casedata <- PBC$data[PBC$data[,3]==1,1:2]
-PBC.controldata <- PBC$data[PBC$data[,3]==0,1:2]
+PBC.casedata <- split(PBC)[[1]]
+PBC.controldata <- split(PBC)[[2]]
 
 pbc.rrs.rawdata <- risk(f = PBC.casedata, g = PBC.controldata,
- WIN = PBC$owin, adaptive = TRUE, tolerate = TRUE)
+ adaptive = TRUE, tolerate = TRUE)
  
 plot(pbc.rrs.rawdata, display = "3d", aspect = 1:2, col = heat.colors(12)[12:1],
  tolerance.matrix = pbc.rrs.rawdata$P, tol.opt = list(col = "white", raise = 0.03))

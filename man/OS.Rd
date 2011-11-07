@@ -45,19 +45,19 @@ T.M. Davies
 %}
 
 \examples{
+
 data(PBC)
+PBC.casedata <- split(PBC)[[1]]
+PBC.controldata <- split(PBC)[[2]]
 
-##Using geometric mean of case and control counts as n
-n1 <- sum(PBC$data[,3])
-n2 <- nrow(PBC$data) - n1
+pbc.h <- OS(PBC, nstar = sqrt(PBC.casedata$n * PBC.controldata$n))
 
-OS(data = PBC$data[,1:2], nstar = sqrt(n1 * n2))
 
 ##Scaling bandwidth for case data using standard deviations
-sd.x <- sd(PBC$data[PBC$data[,3]==1,1])
-sd.y <- sd(PBC$data[PBC$data[,3]==1,2])
+sd.x <- sd(PBC.casedata$x)
+sd.y <- sd(PBC.casedata$y)
 
-OS(data = PBC$data[PBC$data[,3]==1,1:2], scaler = mean(sd.x, sd.y))
+OS(data = PBC.casedata, scaler = mean(sd.x, sd.y))
 
 }
 
