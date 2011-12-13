@@ -71,9 +71,11 @@ Leave-one-out LSCV for jointly optimal, common bandwidth selection in the kernel
 }
 
 \examples{
+\dontrun{
 data(chorley)
 
 LSCV.risk(cases = split(chorley)[[1]], controls = split(chorley)[[2]],
  hlim = c(0.1,2))
+}
 }
 

@@ -64,6 +64,7 @@ Leave-one-out LSCV for bandwidth selection in kernel density estimation is notor
 }
 
 \examples{
+\dontrun{
 data(PBC)
 
 ##PBC cases
@@ -71,6 +72,6 @@ LSCV.density(split(PBC)[[1]],hlim=c(10,400))
 
 ##PBC controls
 LSCV.density(split(PBC)[[2]],hlim=c(10,400))
-
+}
 }
 
