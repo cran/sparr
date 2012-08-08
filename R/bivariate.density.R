@@ -88,6 +88,22 @@ bivariate.density <- function(data, ID = NULL, pilotH, globalH = pilotH, adaptiv
 		if(any(counts<=0)) stop("counts must be positive integers")
 	}
 	
+	if(!is.null(WIN)){
+		if(class(WIN)!="owin"){
+			stop("WIN must be an object of class 'owin'")
+		} else {
+			xrange <- WIN$xrange
+			yrange <- WIN$yrange
+		}
+	} else {
+		if(length(xrange)!=2||length(yrange)!=2){
+			stop("no WIN argument supplied - xrange and yrange must both be vectors of length 2")
+		} else {
+			WIN <- owin(xrange,yrange)
+			warning("WIN not specified - using rectangular region defined by xrange and yrange arguments")
+		}
+	}
+	
 	
 	duplicates <- dupli.data.frame(data,WIN,comment)
 	#dupunidata <- NULL
@@ -113,22 +129,7 @@ bivariate.density <- function(data, ID = NULL, pilotH, globalH = pilotH, adaptiv
 	#	warning("currently only supports bivariate Gaussian kernel. sorry.")
 	#}
 	
-	if(!is.null(WIN)){
-		if(class(WIN)!="owin"){
-			stop("WIN must be an object of class 'owin'")
-		} else {
-			xrange <- WIN$xrange
-			yrange <- WIN$yrange
-		}
-	} else {
-		if(length(xrange)!=2||length(yrange)!=2){
-			stop("no WIN argument supplied - xrange and yrange must both be vectors of length 2")
-		} else {
-			WIN <- owin(xrange,yrange)
-			warning("WIN not specified - using rectangular region defined by xrange and yrange arguments")
-		}
-	}
-	
+
     xrg <- seq(xrange[1],xrange[2],length=res)
     yrg <- seq(yrange[1],yrange[2],length=res)
 	xdatarange <- sort(rep(xrg,res))

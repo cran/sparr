@@ -12,8 +12,8 @@ Provides functions to estimate fixed and adaptive kernel-smoothed relative risk 
 \details{
 \tabular{ll}{
 Package: \tab sparr\cr
-Version: \tab 0.3-1\cr
-Date: \tab 2011-12-13\cr
+Version: \tab 0.3-2\cr
+Date: \tab 2012-08-08\cr
 License: \tab GPL (>= 2) \cr
 }
 
@@ -53,10 +53,12 @@ The \code{sparr} package depends upon some other important contributions to CRAN
 \code{MASS} - Utility support for internal functions; see Venables and Ripley (2002).
 }
 \author{
-T.M. Davies, M.L. Hazelton and J.C. Marshall\cr
+T.M. Davies\cr
+Dept. of Mathematics & Statistics, University of Otago, Dunedin, New Zealand;\cr
+M.L. Hazelton and J.C. Marshall\cr
 Institute of Fundamental Sciences - Statistics, Massey University, Palmerston North, New Zealand.\cr
 
-Maintainer: T.M.D. \email{t.davies@massey.ac.nz}\cr
+Maintainer: T.M.D. \email{tdavies@maths.otago.ac.nz}\cr
 Feedback welcomed.
 }
 \section{Citation}{

@@ -40,7 +40,7 @@ LSCV.risk <- function(cases, controls, hlim = NULL, method = c("kelsall-diggle",
 	pos <- 0
 	for(i in 1:(M-1)){     
 		for(j in 1:(N-1)){
-			temp.win <- owin(x=c(mgr[i],mgr[i+1]),y=c(ngr[j],ngr[j+1]))
+			temp.win <- owin(xrange=c(mgr[i],mgr[i+1]),yrange=c(ngr[j],ngr[j+1]))
 			pos <- pos+1
 			temp.cen <- centroid.owin(w=temp.win)
 			cellCentroids$x[pos] <- temp.cen$x
