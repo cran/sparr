@@ -78,7 +78,7 @@ The MC approach is provided as an option here for the sake of completeness only,
 %% ~~objects to See Also as \code{\link{help}}, ~~~
 %}
 \examples{
-
+\dontrun{
 data(chorley)
 ch.h <- LSCV.density(chorley, hlim = c(0.1, 2))
 
@@ -95,7 +95,7 @@ ch.tol <- tolerance(rs = ch.rrs, pooled = ch.pool)
 contour(ch.tol$X, ch.tol$Y, ch.tol$P, levels = 0.05, add = TRUE)
 
 
-\dontrun{
+
 data(PBC)
 PBC.casedata <- split(PBC)[[1]]
 PBC.controldata <- split(PBC)[[2]]

@@ -100,6 +100,7 @@ If raw data is supplied to \code{\link{risk}}, as opposed to previously computed
 %% ~~objects to See Also as \code{\link{help}}, ~~~
 %}
 \examples{
+\dontrun{
 data(PBC)
 PBC.casedata <- split(PBC)[[1]]
 PBC.controldata <- split(PBC)[[2]]
@@ -117,4 +118,4 @@ pbc.rrs <- risk(f = pbc.case, g = pbc.con, plotit = FALSE)
 summary(pbc.rrs)
 
 }
-
+}
