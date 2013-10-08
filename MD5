@@ -1,5 +1,5 @@
-dc1d3bc62f45a6ec5070136e473094f4 *DESCRIPTION
-deceb60c7c187f82df039d583fad8ddd *NAMESPACE
+d42f136cf613a5844bf3777a9ccc77e8 *DESCRIPTION
+237ce3cd2cda36a8d2a61d80928f1c1b *NAMESPACE
 dfedffdfd13d44370f29f8f4e0f79e6e *R/AREA_BASIC.R
 f0d82b6b29125e693cd33086efe734f3 *R/KBivN.R
 dd4d3d33855348655d44ba916fb5450e *R/KBivN_OPT.R
@@ -54,7 +54,7 @@ d4da922ef7a252a92c2faf6ab462c5e5 *man/LSCV.risk.Rd
 e7e8300dae5c4a6e11c97cf49804e390 *man/plot.bivden.Rd
 507ea7be0d5ac5c2ba61215375fb78e7 *man/risk.Rd
 2f7d08c31d692b86a1de5fb836d16a8a *man/sparr-internal.Rd
-15345d0b9ee0e7a2103c7895d0bfea46 *man/sparr-package.Rd
+ac3872391e7482b3c78bbb75307107cb *man/sparr-package.Rd
 3586f01f60db9899f2e8acb88a3a018e *man/summary.bivden.Rd
 5fa5565d9aa888ec3f3bfcf3266c2aed *man/summary.rrs.Rd
 55c68d3a3294d4303790bdf64710ec12 *man/tolerance.Rd
