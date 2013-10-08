@@ -1,5 +1,5 @@
 
-importFrom(spatstat, as.im)
+import(spatstat,rgl,MASS)
 
 export(KBivN,KBivQ,OS,NS,LSCV.density,LSCV.risk,bivariate.density,risk,tolerance)
 
