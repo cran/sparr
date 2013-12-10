@@ -1,6 +1,6 @@
 
 .onAttach <- function(libname, pkgname)
 {
-	packageStartupMessage("\n\nWelcome to 'sparr': SPAtial Relative Risk (v0.3-2)\nT.M. Davies, M.L. Hazelton & J.C. Marshall\n-type 'help(\"sparr\")' for details\n-type 'citation(\"sparr\")' for how to cite use of this package\n", appendLF=T)
+	packageStartupMessage("\n\nWelcome to 'sparr': SPAtial Relative Risk (v0.3-4)\nT.M. Davies, M.L. Hazelton & J.C. Marshall\n-type 'help(\"sparr\")' for details\n-type 'citation(\"sparr\")' for how to cite use of this package\n", appendLF=T)
 }
 
