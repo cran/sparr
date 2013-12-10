@@ -1,6 +1,6 @@
-bivariate.density <- function(data, ID = NULL, pilotH, globalH = pilotH, adaptive = TRUE, edgeCorrect = TRUE, res = 50, WIN = NULL, counts = NULL, intensity = FALSE, xrange = NULL, yrange = NULL, trim = 5, gamma = NULL, atExtraCoords = NULL, use.ppp.methods = TRUE, comment = TRUE){
+bivariate.density <- function(data, ID = NULL, pilotH = NULL, globalH = pilotH, adaptive = TRUE, edgeCorrect = TRUE, res = 50, WIN = NULL, counts = NULL, intensity = FALSE, xrange = NULL, yrange = NULL, trim = 5, gamma = NULL, pdef = NULL, atExtraCoords = NULL, use.ppp.methods = TRUE, comment = TRUE){
     
-	if(comment) print(date())
+	if(comment) cat(date())
 	if(comment) cat("\nperforming basic check of arguments...\n")
 	
 	data.org.cls <- class(data)
@@ -70,7 +70,17 @@ bivariate.density <- function(data, ID = NULL, pilotH, globalH = pilotH, adaptiv
 	
 	if(is.null(WIN)&&is.null(xrange)&&data.org.cls!="ppp") stop("if 'data' is not of class 'ppp' then user must supply either 'WIN' or 'xrange' AND 'yrange'")
 	
-	if(pilotH<=0||is.na(pilotH)||is.null(pilotH)) stop("'pilotH' must be > 0")
+	
+	if(is.null(pdef)){
+		if(pilotH<=0||is.na(pilotH)||is.null(pilotH)) stop("'pilotH' must be > 0")
+	} else {
+		if(!adaptive){
+			warning("'pdef' object ignored for fixed-bandwidth estimates")
+			if(pilotH<=0||is.na(pilotH)||is.null(pilotH)) stop("'pilotH' must be > 0")	
+		} else {
+			if(class(pdef)!="bivden") stop("'pdef' must be an object of class 'bivden'")
+		}
+	}
 	if(globalH<=0||is.na(globalH)||is.null(globalH)) stop("'globalH' must be > 0")
 	if(res<=0||is.na(res)||is.null(res)) stop("invalid resolution")
 	if(length(trim)>1){
@@ -80,8 +90,6 @@ bivariate.density <- function(data, ID = NULL, pilotH, globalH = pilotH, adaptiv
 	if(!is.na(trim)){
 		if(trim<=0) trim <- NA
 	}
-	
-	
 	
 	if(!is.null(counts)){
 		counts <- round(counts) ##warning here?
@@ -123,12 +131,6 @@ bivariate.density <- function(data, ID = NULL, pilotH, globalH = pilotH, adaptiv
 	else nfac <- 1
 	
 	if(length(counts)!=nrow(data)) stop("'counts' arg must be of equal length to no. of obervations")
-	
-	#if(kType!="gaus"){
-	#	kType <- "gaus"
-	#	warning("currently only supports bivariate Gaussian kernel. sorry.")
-	#}
-	
 
     xrg <- seq(xrange[1],xrange[2],length=res)
     yrg <- seq(yrange[1],yrange[2],length=res)
@@ -151,38 +153,57 @@ bivariate.density <- function(data, ID = NULL, pilotH, globalH = pilotH, adaptiv
 	if(comment) cat("setting up bandwidth(s)...\n")
 	
 	if(adaptive){
-		if(!use.ppp.methods){
-			spec_pilot_f_values <- apply(as.matrix(data),1,KSPEC,data=data,h=pilotH,type=kType,counts=counts)
-			total_pilot_f_values <- apply(as.matrix(datarangeNA),1,KSPEC,data=data,h=pilotH,type=kType,counts=counts)
-			if(edgeCorrect){
-				spec_pilot_f_values <- spec_pilot_f_values/getQhz_Fixed(Xseq=data[,1],Yseq=data[,2],kType=kType,WIN=WIN,h=pilotH,both=F)$qhz
-				total_pilot_f_values <- total_pilot_f_values/getQhz_Fixed(Xseq=datarange[,1],Yseq=datarange[,2],kType=kType,WIN=WIN,h=pilotH,both=F)$qhz
-			}
-		} else {
-			pilot.ppp <- ppp(x=data[,1],y=data[,2],window=WIN,check=F)
-			pilot.density <- density(pilot.ppp,sigma=pilotH,xy=datarange.list,weights=counts*rep(1/n,nrow(data)),edge=edgeCorrect)
-			
-			corrGridSpec <- apply(data,1,getNearest,gridx=xdatarange,gridy=ydatarange,WIN=WIN)
-			total_pilot_f_values <- as.vector(pilot.density$v)
-			total_pilot_f_values[which(is.nan(total_pilot_f_values))] <- NA
-			total_pilot_f_values[which(is.infinite(total_pilot_f_values))] <- NA
-			total_min <- min(na.omit(total_pilot_f_values)[na.omit(total_pilot_f_values)>0])
-			total_pilot_f_values[!is.na(total_pilot_f_values)][total_pilot_f_values[!is.na(total_pilot_f_values)]<=0] <- total_min
-			spec_pilot_f_values <- total_pilot_f_values[corrGridSpec]
-		}
-		
-		if(!is.null(atExtraCoords)){
+		if(is.null(pdef)){
 			if(!use.ppp.methods){
+				spec_pilot_f_values <- apply(as.matrix(data),1,KSPEC,data=data,h=pilotH,type=kType,counts=counts)
+				total_pilot_f_values <- apply(as.matrix(datarangeNA),1,KSPEC,data=data,h=pilotH,type=kType,counts=counts)
 				if(edgeCorrect){
-					extra_pilot_f_values <- apply(as.matrix(atExtraCoords),1,KSPEC,data=data,h=pilotH,type=kType,counts=counts)/getQhz_Fixed(Xseq=atExtraCoords[,1],Yseq=atExtraCoords[,2],kType=kType,WIN=WIN,h=pilotH,both=F)$qhz
-				} else {
-					extra_pilot_f_values <- apply(as.matrix(atExtraCoords),1,KSPEC,data=data,h=pilotH,type=kType,counts=counts)
+					spec_pilot_f_values <- spec_pilot_f_values/getQhz_Fixed(Xseq=data[,1],Yseq=data[,2],kType=kType,WIN=WIN,h=pilotH,both=F)$qhz
+					total_pilot_f_values <- total_pilot_f_values/getQhz_Fixed(Xseq=datarange[,1],Yseq=datarange[,2],kType=kType,WIN=WIN,h=pilotH,both=F)$qhz
 				}
 			} else {
+				pilot.ppp <- ppp(x=data[,1],y=data[,2],window=WIN,check=F)
+				pilot.density <- density(pilot.ppp,sigma=pilotH,xy=datarange.list,weights=counts*rep(1/n,nrow(data)),edge=edgeCorrect)
+			
+				corrGridSpec <- apply(data,1,getNearest,gridx=xdatarange,gridy=ydatarange,WIN=WIN)
+				total_pilot_f_values <- as.vector(pilot.density$v)
+				total_pilot_f_values[which(is.nan(total_pilot_f_values))] <- NA
+				total_pilot_f_values[which(is.infinite(total_pilot_f_values))] <- NA
+				total_min <- min(na.omit(total_pilot_f_values)[na.omit(total_pilot_f_values)>0])
+				total_pilot_f_values[!is.na(total_pilot_f_values)][total_pilot_f_values[!is.na(total_pilot_f_values)]<=0] <- total_min
+				spec_pilot_f_values <- total_pilot_f_values[corrGridSpec]
+			}
+		
+			if(!is.null(atExtraCoords)){
+				if(!use.ppp.methods){
+					if(edgeCorrect){
+						extra_pilot_f_values <- apply(as.matrix(atExtraCoords),1,KSPEC,data=data,h=pilotH,type=kType,counts=counts)/getQhz_Fixed(Xseq=atExtraCoords[,1],Yseq=atExtraCoords[,2],kType=kType,WIN=WIN,h=pilotH,both=F)$qhz
+					} else {
+						extra_pilot_f_values <- apply(as.matrix(atExtraCoords),1,KSPEC,data=data,h=pilotH,type=kType,counts=counts)
+					}
+				} else {
+					corrGridExtra <- apply(atExtraCoords,1,getNearest,gridx=xdatarange,gridy=ydatarange,WIN=WIN)
+					extra_pilot_f_values <- total_pilot_f_values[corrGridExtra]
+				}
+			}
+		} else {
+			if(length(xrg)!=length(pdef$X)||length(yrg)!=length(pdef$Y)){
+				stop("'pdef' grid resolution must be identical to current value of 'res'")
+			} else {
+				if(!all(c(xrg,yrg)==c(pdef$X,pdef$Y))) stop("'pdef' must have identical grid coordinates to the current estimate")
+			}
+			
+			if(!identical_windows(WIN,pdef$WIN)) stop("'pdef' window object must be identical to current 'WIN'")
+
+			total_pilot_f_values <- as.vector(t(pdef$Zm))
+			corrGridSpec <- apply(data,1,getNearest,gridx=xdatarange,gridy=ydatarange,WIN=WIN)
+			spec_pilot_f_values <- total_pilot_f_values[corrGridSpec]
+			
+			if(!is.null(atExtraCoords)){
 				corrGridExtra <- apply(atExtraCoords,1,getNearest,gridx=xdatarange,gridy=ydatarange,WIN=WIN)
 				extra_pilot_f_values <- total_pilot_f_values[corrGridExtra]
 			}
-		}
+		} 
 	
 		if(is.null(gamma)) gamma <- exp(mean(log(1/sqrt(spec_pilot_f_values))))
 		

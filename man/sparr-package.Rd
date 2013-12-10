@@ -12,8 +12,8 @@ Provides functions to estimate fixed and adaptive kernel-smoothed relative risk 
 \details{
 \tabular{ll}{
 Package: \tab sparr\cr
-Version: \tab 0.3-3\cr
-Date: \tab 2013-10-08\cr
+Version: \tab 0.3-4\cr
+Date: \tab 2013-12-10\cr
 License: \tab GPL (>= 2) \cr
 }
 

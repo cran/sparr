@@ -13,8 +13,8 @@ Provides an adaptive or fixed bandwidth kernel density estimate of bivariate dat
 bivariate.density(data, ID = NULL, pilotH, globalH = pilotH,
 		  adaptive = TRUE, edgeCorrect = TRUE, res = 50, WIN = NULL,
 		  counts = NULL, intensity = FALSE, xrange = NULL,
-		  yrange = NULL, trim = 5, gamma = NULL, atExtraCoords = NULL,
-		  use.ppp.methods = TRUE, comment = TRUE)
+		  yrange = NULL, trim = 5, gamma = NULL, pdef = NULL, 
+		  atExtraCoords = NULL, use.ppp.methods = TRUE, comment = TRUE)
 }
 \arguments{
   \item{data}{
@@ -58,6 +58,9 @@ A numeric value (defaulting to \code{5}) that prevents excessively large bandwid
 }
   \item{gamma}{
 An optional positive numeric value to use in place of \code{gamma} for adaptive bandwidth calculation (see `Details'). For adaptive relative risk estimation, this value can sensibly be chosen as common for both case and control densities (such as the \code{gamma} value from the adaptive density estimate of the `pooled' (full) dataset) - see Davies and Hazelton (2010). If nothing is supplied (default), this value is computed from the data being used to estimate the density in the defined fashion (again, see `Details'). Ignored for fixed bandwidth estimation.
+}
+  \item{pdef}{
+An optional object of class \code{bivden} for adaptive density estimation. This object is used as an alternative or `external' way to specify the pilot density for computing the variable bandwidth factors and must have the same grid resolution and coordinates as the estimate currently being constructed. If \code{NULL} (default) the pilot density is computed internally using \code{pilotH} from above, but if supplied, \code{pilotH} need not be given. Ignored if \code{adaptive = FALSE}.
 }
   \item{atExtraCoords}{
 It can occasionally be useful to retrieve the values of the estimated density at specific coordinates that are not the specific observations or the exact grid coordinates, for further analysis or plotting. \code{atExtraCoords} allows the user to specify an additional object of type \code{\link{data.frame}} with 2 colums giving the x \code{atExtraCoords[,1]} and y \code{atExtraCoords[,2]} coordinates at which to calculate and return the estimated density and other statistics (see `Value').

@@ -1,0 +1,6 @@
+
+	CHANGES IN sparr VERSION 0.3-4
+	
+   
+    o Added functionality to ‘bivariate.density’ to allow the external specification of a pilot density for adaptive estimation through the new argument ‘pref’. See function documentation.
+
