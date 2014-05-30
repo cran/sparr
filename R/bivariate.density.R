@@ -49,7 +49,6 @@ bivariate.density <- function(data, ID = NULL, pilotH = NULL, globalH = pilotH, 
 	if(is.null(ID)){
 		if(ncol(data)==3){
 			data <- data[,1:2]
-			#warning("data has more than 2 columns and no ID argument specified - attempting fit on first two columns of data, ignoring third")
 		}
 	} else {
 		if(ncol(data)==2){
@@ -58,8 +57,6 @@ bivariate.density <- function(data, ID = NULL, pilotH = NULL, globalH = pilotH, 
 			if(length(unique(data[,3]))>2) warning("more than two distinct ID values detected in 'data'")
 			if(data.org.cls=="ppp") ID <- num.levels[which(org.levels==ID)]
 			if(nrow(data[data[,3]==ID,])==0) stop("no observations match given 'ID'!")
-			#datafull <- data
-			#data <- datafull[datafull[,3]==ID,1:2]
 			data <- data[data[,3]==ID,1:2]
 			if(nrow(data)<10) warning("less than 10 observations!")
 		}
@@ -114,7 +111,6 @@ bivariate.density <- function(data, ID = NULL, pilotH = NULL, globalH = pilotH, 
 	
 	
 	duplicates <- dupli.data.frame(data,WIN,comment)
-	#dupunidata <- NULL
 	if(!is.null(duplicates$counts)&&!is.null(counts)){
 		warning("duplicated coords detected - ignoring user supplied arg 'counts' and creating own")
 		counts <- duplicates$counts
@@ -141,11 +137,9 @@ bivariate.density <- function(data, ID = NULL, pilotH = NULL, globalH = pilotH, 
 		if(comment) warning(paste("data contain",sum(!inside.owin(data[,1],data[,2],WIN)),"observations outside study region WIN - these were removed"))
 		data <- data[-which(!inside.owin(data[,1],data[,2],WIN)),]
 	}
-	
-    #gamma <- 
+	 
 	hypoH <- spec_pilot_f_values <- total_pilot_f_values <- extra_pilot_f_values <- NULL
-	#n <- nrow(data)
-    datarange <- data.frame(cbind(xdatarange,ydatarange))
+	datarange <- data.frame(cbind(xdatarange,ydatarange))
 	datarange.list <- list(x=xrg,y=yrg)
     datarangeNA <- data.frame(cbind(xdatarange,ydatarange))
     datarangeNA[!inside.owin(datarangeNA[,1],datarangeNA[,2],WIN),] <- NA
@@ -208,15 +202,15 @@ bivariate.density <- function(data, ID = NULL, pilotH = NULL, globalH = pilotH, 
 		if(is.null(gamma)) gamma <- exp(mean(log(1/sqrt(spec_pilot_f_values))))
 		
 		h <- globalH*sqrt(1/spec_pilot_f_values)*(1/gamma)
-
-		if(!is.na(trim)){
-			beta.hM <- trim*median(h[!is.na(h)])
-			h[!is.na(h)][h[!is.na(h)] > beta.hM] <- beta.hM    #bandwidth trimming fashion??
-		}
-	   
 		hypoH <- globalH*sqrt(1/total_pilot_f_values)*(1/gamma)
-	  
+		
 		if(!is.na(trim)){
+			if(is.null(pdef)){
+				beta.hM <- trim*median(h[!is.na(h)])
+			} else {
+				beta.hM <- trim*median((globalH*sqrt(1/pdef$zSpec)*(1/gamma))[!is.na(globalH*sqrt(1/pdef$zSpec)*(1/gamma))])
+			}
+			h[!is.na(h)][h[!is.na(h)] > beta.hM] <- beta.hM
 			hypoH[!is.na(hypoH)][hypoH[!is.na(hypoH)] > beta.hM] <- beta.hM 
 		}
 		
@@ -226,7 +220,6 @@ bivariate.density <- function(data, ID = NULL, pilotH = NULL, globalH = pilotH, 
 				extraH[!is.na(extraH)][extraH[!is.na(extraH)] > beta.hM] <- beta.hM 
 			}
 		}
-
     } else {
         h <- rep(pilotH,nrow(data))
 		if(use.ppp.methods){
@@ -268,7 +261,6 @@ bivariate.density <- function(data, ID = NULL, pilotH = NULL, globalH = pilotH, 
 						pilotH=pilotH,
 						globalH=NA,
 						hypoH=NA,
-						#zVec=surfA,
 						zSpec=nfac*raw.v[corrGridSpec]/qhzSpec,
 						zExtra=nfac*extra,
 						WIN=WIN,
@@ -330,7 +322,6 @@ bivariate.density <- function(data, ID = NULL, pilotH = NULL, globalH = pilotH, 
 					pilotH=pilotH,
 					globalH=globalH,
 					hypoH=matrix(hypoH,res,res,byrow=T),
-					#zVec=surfA,
 					zSpec=nfac*surfB,
 					zExtra=nfac*surfC,
 					WIN=WIN,
@@ -397,7 +388,6 @@ bivariate.density <- function(data, ID = NULL, pilotH = NULL, globalH = pilotH, 
                 pilotH=pilotH,
                 globalH=globalH,
                 hypoH=hypoH,
-                #zVec=surfA,
                 zSpec=nfac*surfB,
                 zExtra=nfac*surfC,
                 WIN=WIN,
