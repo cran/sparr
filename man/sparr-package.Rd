@@ -12,8 +12,8 @@ Provides functions to estimate fixed and adaptive kernel-smoothed relative risk 
 \details{
 \tabular{ll}{
 Package: \tab sparr\cr
-Version: \tab 0.3-5\cr
-Date: \tab 2014-05-30\cr
+Version: \tab 0.3-6\cr
+Date: \tab 2014-10-25\cr
 License: \tab GPL (>= 2) \cr
 }
 
@@ -46,9 +46,8 @@ Most applications of the relative risk function in practice require plotting the
 }
 
 \section{Dependencies}{
-The \code{sparr} package depends upon some other important contributions to CRAN in order to operate; their uses here are indicated:\cr\cr
+The \code{sparr} package depends upon/imports some other important contributions to CRAN in order to operate; their uses here are indicated:\cr\cr
 \code{\link[spatstat]{spatstat}} - Fast-fourier transform assistance with fixed and adaptive density estimation, as well as region handling; see Baddeley and Turner (2005).\cr
-%\code{\link[sm]{sm}} - Provision of LSCV bandwidth calculation; see Bowman and Azzalini (1997, 2010).\cr
 \code{\link[rgl]{rgl}} - Interactive 3D plotting of densities and surfaces; see Adler and Murdoch (2009).\cr
 \code{MASS} - Utility support for internal functions; see Venables and Ripley (2002).
 }

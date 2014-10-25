@@ -1,5 +1,6 @@
 
-import(spatstat,rgl,MASS)
+importFrom(MASS,mvrnorm)
+import(spatstat,rgl)
 
 export(KBivN,KBivQ,OS,NS,LSCV.density,LSCV.risk,bivariate.density,risk,tolerance)
 
