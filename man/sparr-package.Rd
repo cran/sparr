@@ -12,8 +12,8 @@ Provides functions to estimate fixed and adaptive kernel-smoothed relative risk 
 \details{
 \tabular{ll}{
 Package: \tab sparr\cr
-Version: \tab 0.3-6\cr
-Date: \tab 2014-10-25\cr
+Version: \tab 0.3-7\cr
+Date: \tab 2015-09-14\cr
 License: \tab GPL (>= 2) \cr
 }
 
@@ -74,6 +74,7 @@ Bithell, J.F. (1991), Estimation of relative risk function,. \emph{Statistics in
 Bowman, A.W. and Azzalini, A. (1997), \emph{Applied Smoothing Techniques for Data Analysis: The Kernel Approach with S-Plus Illustrations.} Oxford University Press Inc., New York. ISBN 0-19-852396-3.\cr
 %Bowman, A.W. and Azzalini, A. (2010), R package 'sm': nonparametric smoothing methods (version 2.2-4), URL: http://www.stats.gla.ac.uk/~adrian/sm; http://azzalini.stat.unipd.it/Book_sm\cr
 Davies, T.M. and Hazelton, M.L. (2010), Adaptive kernel estimation of spatial relative risk, \emph{Statistics in Medicine}, \bold{29}(23) 2423-2437.\cr
+Davies, T.M., Jones, K. and Hazelton, M.L. (2015), Symmetric adaptive smoothing regimens for estimation of the spatial relative risk function, \emph{Submitted for publication}.\cr
 Hazelton, M. L. (2008), Letter to the editor: Kernel estimation of risk surfaces without the need for edge correction, \emph{Statistics in Medicine}, \bold{27}, 2269-2272.\cr
 Hazelton, M.L. and Davies, T.M. (2009), Inference based on kernel estimates of the relative risk function in geographical epidemiology, \emph{Biometrical Journal}, \bold{51}(1), 98-109.\cr
 Kelsall, J.E. and Diggle, P.J. (1995a), Kernel estimation of relative risk, \emph{Bernoulli}, \bold{1}, 3-16.\cr

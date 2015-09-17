@@ -101,6 +101,7 @@ An object of class \code{"bivden"}. This is effectively a list with the followin
 \item{qhz}{ a numeric matrix of the edge-correction factors for the entire evaluation grid (with placement corresponding to \code{Zm}. If \code{edgeCorrect = FALSE}, all edge correction factors are set to and returned as \code{1}}
 \item{qhzSpec}{ edge-correction factors for the individual observations; order corresponding to \code{data}}
 \item{qhzExtra}{ as \code{qhzSpec} for the observations in \code{atExtraCoords}; \code{NA} if \code{atExtraCoords} is not supplied}
+\item{pdef}{ a copy of the object originally supplied as the pilot density as per the \code{pdef} argument; \code{NULL} if unused}
 \item{pilotvals}{ the values of the pilot density used to compute the adaptive bandwidths. Order corresponds to the order of the observations in \code{data}. \code{NULL} when \code{adaptive = FALSE}}
 \item{gamma}{ the value of \code{gamma} that was passed to the function, or the geometric mean term of the reciprocal of the square root of the pilot density values used to scale the adaptive bandwidths if \code{gamma} is not supplied. \code{NULL} when \code{adaptive = FALSE}}
 \item{counts}{ the counts vector used in estimation of the density/intensity. If all values in \code{data} were unique and \code{counts = NULL}, the returned \code{counts} will be a vector of ones equal to the number of coordinates in \code{data}}
@@ -111,6 +112,7 @@ An object of class \code{"bivden"}. This is effectively a list with the followin
 \references{
 Abramson, I. (1982). On bandwidth variation in kernel estimates --- a square root law, \emph{Annals of Statistics}, \bold{10}(4), 1217-1223.\cr\cr
 Davies, T.M. and Hazelton, M.L. (2010), Adaptive kernel estimation of spatial relative risk, \emph{Statistics in Medicine}, \bold{29}(23) 2423-2437.\cr\cr
+Davies, T.M., Jones, K. and Hazelton, M.L. (2015), Symmetric adaptive smoothing regimens for estimation of the spatial relative risk function, \emph{Submitted for publication}.\cr\cr
 Diggle, P.J. (1985), A kernel method for smoothing point process data, \emph{Journal of the Royal Statistical Society, Series C}, \bold{34}(2), 138-147.\cr\cr
 Marshall, J.C. and Hazelton, M.L. (2010) Boundary kernels for adaptive density estimators on regions with irregular boundaries, \emph{Journal of Multivariate Analysis}, \bold{101}, 949-963.\cr\cr
 Silverman, B.W. (1986), \emph{Density Estimation for Statistics and Data Analysis}, Chapman & Hall, New York. \cr\cr

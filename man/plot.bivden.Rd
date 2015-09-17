@@ -33,7 +33,7 @@ Boolean. Whether or not to draw the study region as an aesthetic enhancement to 
 The matrix of p-values resulting from a call to \code{\link{tolerance}} and used to draw the asymptotic tolerance contours. If this argument is supplied, tolerance contours are automatically superimposed upon a \code{display = "heat"} or \code{display = "3d"} plot. Ignored for \code{display = "persp"} or \code{display = "contour"} plots. Defaults to \code{NULL}.
 }
   \item{tol.opt}{
-A named list of components that control plotting of the tolerance contours given by \code{tolerance.matrix}. Components \code{col}, \code{levels}, \code{lty} and \code{lwd} are vectors of equal length controlling the colour, significance levels, line type (ignored for \code{display = "3d"}) and line width of the plotted contours respectively. The element \code{raise} is a single numeric value and is used only when \code{display = "3d"}. This vertically (i.e. with respect to the z axis) translates the contours upon the 3-D surface (see `Details'). A value of \code{0} requests no translation. Defaults to \code{0.01}.
+A named list of components that control plotting of the tolerance contours given by \code{tolerance.matrix}. Components \code{col}, \code{levels}, \code{lty}, and \code{lwd} are vectors of equal length controlling the colour, significance levels, line type (ignored for \code{display = "3d"}) and line width of the plotted contours respectively. The element \code{raise} is a single numeric value and is used only when \code{display = "3d"}. This vertically (i.e. with respect to the z axis) translates the contours atop the 3-D surface (see `Details'). A value of \code{0} requests no translation. Defaults to \code{0.01}.
 }
 
 

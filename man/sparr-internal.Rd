@@ -46,6 +46,9 @@ Internal sparr functions, only meant to be accessed by the user directly in a li
 \code{Lsq(x,uh,WIN)}\cr
 \code{nearestBC_Vals(framevals,WIN)}\cr
 \code{rsmc(object,pooled,ITER,corrgrid,comment)}\cr
+\code{rsmc.asym(object,ITER,corrgrid,comment)}\cr
+\code{rsmc.fix(object,ITER,corrgrid,comment)}\cr
+\code{rsmc.sym(object,symchoice,ITER,corrgrid,comment)}\cr
 \code{run_ppp(data,xy,h,WIN,counts)}\cr
 \code{tol3d(X,Y,TOL,RHO,levels=c(0.05),raise=0.1,col="white",lwd=2,lty=1)}\cr
 \code{tol3d.component(locations,gridx,gridy,gridz,raise)}\cr

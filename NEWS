@@ -1,3 +1,11 @@
+	CHANGES IN sparr VERSION 0.3-7
+	   
+    o Modifications to ‘tolerance’ to stabilise and improve Monte-Carlo (MC) tolerance contours. ‘pooled’ is now no longer a required argument for MC contours. The capability of computing adaptive-symmetric and adaptive-asymmetric MC contours is available. New choices for specifying bandwidths at each iteration of the MC loop are provided for both fixed- and adaptive-bandwidth estimators. See function documentation.
+
+    o Speedier plotting of borders and contours when producing the interactive 3D visualisations of a density or risk surface via ‘plot.bivden’ and ‘plot.rrs’.
+
+    o General tidying up of output to the console during the execution of certain functions.
+
 
 	CHANGES IN sparr VERSION 0.3-4
 	

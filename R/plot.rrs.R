@@ -40,17 +40,37 @@ plot.rrs <- function(x, ..., display = c("heat","contour","persp","3d"), show.WI
 		}
 		do.call("persp3d", c(list(x=x$f$X,y=x$f$Y,z=x$rsM), extras)) 
 		if(show.WIN){
-			cat("approximating 3D boundary...\n")
-			gridLocs <- apply(as.data.frame(vertices(x$f$WIN)),1,getNearest,gridx=sort(rep(x$f$X,length(x$f$X))),gridy=rep(x$f$Y,length(x$f$Y)),WIN=x$f$WIN)
-			lines3d(c(vertices(x$f$WIN)$x,vertices(x$f$WIN)$x[1]),c(vertices(x$f$WIN)$y,vertices(x$f$WIN)$y[1]),c(as.vector(t(x$rsM))[gridLocs],as.vector(t(x$rsM))[gridLocs][1]),lwd=4)
+			w <- x$f$WIN
+			wv <- vertices(w)
+			tempdf <- as.data.frame(wv)
+			gridLocs <- rep(NA,nrow(tempdf))
+						
+			tempmask <- as.im(x)
+			
+			grdcoo <- nearest.raster.point(x=tempdf[,1],y=tempdf[,2],w=tempmask)
+			
+			zgrd <- rep(NA,nrow(tempdf))
+			for(i in 1:nrow(tempdf)) zgrd[i] <- tempmask$v[grdcoo$row[i],grdcoo$col[i]]
+			
+			zgrdw <- c(zgrd,zgrd[1])
+			xl <- c(wv$x,wv$x[1])[-which(is.na(zgrdw))]
+			yl <- c(wv$y,wv$y[1])[-which(is.na(zgrdw))]
+			zgrdw <- zgrdw[-which(is.na(zgrdw))]
+
+			lines3d(xl,yl,zgrdw,lwd=4)
 		}
 		if(!is.null(tolerance.matrix)){
-			cat("approximating 3D tolerance contours...\n")
+			
 			gr <- nrow(tolerance.matrix)
 			xt <- sort(rep(seq(x$f$WIN$xrange[1],x$f$WIN$xrange[2],length=gr),gr))
 			yt <- rep(seq(x$f$WIN$yrange[1],x$f$WIN$yrange[2],length=gr),gr)
-			rholocs <- apply(matrix(c(xt,yt),gr*gr,2),1,getNearest,gridx=sort(rep(x$f$X,length(x$f$X))),gridy=rep(x$f$Y,length(x$f$Y)),WIN=x$f$WIN)
-			rhot <- as.vector(t(x$rsM))[rholocs]
+			tempmat <- matrix(c(xt,yt),gr*gr,2)
+			
+			tempmask <- as.im(x)
+			grdcoo <- nearest.raster.point(x=tempmat[,1],y=tempmat[,2],w=tempmask)
+			
+			rhot <- rep(NA,nrow(tempmat))
+			for(i in 1:nrow(tempmat)) rhot[i] <- tempmask$v[grdcoo$row[i],grdcoo$col[i]]
 			
 			if(is.null(tol.opt$raise)) tol.opt$raise <- 0.01
 			if(is.null(tol.opt$col)) tol.opt$col <- "black"
@@ -58,7 +78,6 @@ plot.rrs <- function(x, ..., display = c("heat","contour","persp","3d"), show.WI
 			if(is.null(tol.opt$lwd)) tol.opt$lwd <- 1
 			
 			tol3d(seq(x$f$WIN$xrange[1],x$f$WIN$xrange[2],length=gr),seq(x$f$WIN$yrange[1],x$f$WIN$yrange[2],length=gr),tolerance.matrix,rhot,tol.opt$levels,tol.opt$raise,tol.opt$col,tol.opt$lwd)
-			
 		}
 	}
 }

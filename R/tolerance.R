@@ -1,29 +1,13 @@
-tolerance <- function(rs, pooled, test = "upper", method = "ASY", reduce = 1, ITER = 1000, exactL2 = TRUE, comment = TRUE){ 
-	if(comment) print(date())
+tolerance <- function(rs, test = "upper", method = "ASY", pooled = NULL, symchoice = NULL, hpsim = NULL, h0sim = NULL, reduce = 1, ITER = 1000, exactL2 = TRUE, comment = TRUE){ 
 	
 	if(class(rs)!="rrs") stop("'rs' must be of class 'rrs'")
-	if(class(pooled)!="bivden") stop("'pooled' must be an object of class 'bivden'")
-	
-	if(!all(c(length(rs$f$zVec)==length(pooled$zVec),length(rs$g$zVec)==length(pooled$zVec)))){
-		stop("'pooled' appears to have been estimated using a different evaluation grid to that used in 'rs' - evaluation grids must be identical")
-	}
-	if(!all(c(identical_windows(rs$f$WIN,pooled$WIN),identical_windows(rs$g$WIN,pooled$WIN)))){
-		stop("'pooled$WIN' does not appear to match study region window used in 'rs' - study regions must be identical")
-	}
-	if(length(pooled$hypoH)!=length(rs$f$hypoH)) stop("smoothing approach (fixed or adaptive) of 'pooled' must match approach used in 'rs'")
 	
 	if(all(c("upper","lower","double")!=test)) stop("'test' must be one of 'upper', 'lower' or 'double'")
 	
 	if(reduce<=0) stop("'reduce' must be greater than zero or less than or equal to one")
 	if(reduce>1) stop("'reduce' must be greater than zero or less than or equal to one")
 
-	edgef <- range(as.vector(rs$f$qhz),na.rm=T)[1]!=range(as.vector(rs$f$qhz),na.rm=T)[2]
-	edgep <- range(as.vector(pooled$qhz),na.rm=T)[1]!=range(as.vector(pooled$qhz),na.rm=T)[2]
-	
-	if((edgef+edgep==1)) stop("edge-correction is inconsistent. all densities must be either edge-corrected or not.")
-	
-	
-	adaptive <- (length(pooled$hypoH)>1)
+	adaptive <- (length(rs$f$hypoH)>1)
 	fvec <- as.vector(t(rs$f$Zm))
 	gvec <- as.vector(t(rs$g$Zm))
 
@@ -44,7 +28,26 @@ tolerance <- function(rs, pooled, test = "upper", method = "ASY", reduce = 1, IT
 
 
 	if(method=="ASY"){
-
+		
+		if(is.null(pooled)) stop("'pooled' density estimate required for asymptotics")
+		
+		if(class(pooled)!="bivden") stop("'pooled' must be an object of class 'bivden'")
+	
+		if(!all(c(length(rs$f$zVec)==length(pooled$zVec),length(rs$g$zVec)==length(pooled$zVec)))){
+			stop("'pooled' appears to have been estimated using a different evaluation grid to that used in 'rs' - evaluation grids must be identical")
+		}
+		
+		if(!all(c(identical_windows(rs$f$WIN,pooled$WIN),identical_windows(rs$g$WIN,pooled$WIN)))){
+			stop("'pooled$WIN' does not appear to match study region window used in 'rs' - study regions must be identical")
+		}
+		
+		if(length(pooled$hypoH)!=length(rs$f$hypoH)) stop("smoothing approach (fixed or adaptive) of 'pooled' must match approach used in 'rs'")
+	
+		edgef <- range(as.vector(rs$f$qhz),na.rm=T)[1]!=range(as.vector(rs$f$qhz),na.rm=T)[2]
+		edgep <- range(as.vector(pooled$qhz),na.rm=T)[1]!=range(as.vector(pooled$qhz),na.rm=T)[2]
+	
+		if((edgef+edgep==1)) stop("edge-correction is inconsistent. all densities must be either edge-corrected or not.")
+	
 		datarange.list <- list(x=seq(xr[1],xr[2],length=gsize),y=seq(yr[1],yr[2],length=gsize))
 		
 		if(edgep){
@@ -143,7 +146,6 @@ tolerance <- function(rs, pooled, test = "upper", method = "ASY", reduce = 1, IT
 				if(comment) cat("calculating integrals K and K2...\n")
 			
 				if(comment) cat("--f--\n")
-				#fk <- apply(as.matrix(data.frame(cbind(grx,gry,as.vector(t(rs$f$hypoH))[corrGridSpec]))),1,getQhz_Adaptive,kType="gaus",WIN=rs$f$WIN,both=T)
 				hypoQuan <- unique(quantile(as.vector(t(rs$f$hypoH))[corrGridSpec],(1:100)/100,na.rm=T))
 				corrQuan <- apply(as.matrix(as.vector(t(rs$f$hypoH))[corrGridSpec]),1,idQuan,q=hypoQuan)
 				qQuan <- apply(as.matrix(hypoQuan),1,run_ppp,data=rs$f$data,xy=datarange.list,WIN=rs$f$WIN,counts=rs$f$counts)
@@ -161,7 +163,6 @@ tolerance <- function(rs, pooled, test = "upper", method = "ASY", reduce = 1, IT
 				
 				
 				if(comment) cat("--g--\n")
-				#gk <- apply(as.matrix(data.frame(cbind(grx,gry,as.vector(t(rs$g$hypoH))[corrGridSpec]))),1,getQhz_Adaptive,kType="gaus",WIN=rs$g$WIN,both=T)
 				hypoQuan <- unique(quantile(as.vector(t(rs$g$hypoH))[corrGridSpec],(1:100)/100,na.rm=T))
 				corrQuan <- apply(as.matrix(as.vector(t(rs$g$hypoH))[corrGridSpec]),1,idQuan,q=hypoQuan)
 				qQuan <- apply(as.matrix(hypoQuan),1,run_ppp,data=rs$g$data,xy=datarange.list,WIN=rs$g$WIN,counts=rs$g$counts)
@@ -230,7 +231,6 @@ tolerance <- function(rs, pooled, test = "upper", method = "ASY", reduce = 1, IT
 				if(comment) cat("\n--Fixed-bandwidth asymptotics--\n")
 				if(comment) cat("calculating integrals K and K2...")
 			
-				#k2fix <- getQhz_Fixed(grx,gry,"gaus",pooled$WIN,pooled$pilotH,T,F)
 				kfix <- as.vector(run_ppp(data=pooled$data,xy=datarange.list,h=pooled$pilotH,WIN=pooled$WIN,counts=pooled$counts)$edg$v)
 				k2fix <- (1/(4*pi))*as.vector(run_ppp(data=pooled$data,xy=datarange.list,h=(sqrt(0.5*pooled$pilotH^2)),WIN=pooled$WIN,counts=pooled$counts)$edg$v)
 				
@@ -255,12 +255,27 @@ tolerance <- function(rs, pooled, test = "upper", method = "ASY", reduce = 1, IT
 		} else {
 			P <- 2*pnorm(abs(Zstandard),lower.tail=F)
 		}
-		if(comment) print(date())
+		if(comment){ 
+			t2 <- Sys.time()
+			cat("\n")
+			print(t2-t1)
+		}
 		return(list(X=seq(xr[1],xr[2],length=gsize),Y=seq(yr[1],yr[2],length=gsize),Z=matrix(Zstandard,gsize,gsize,byrow=T),P=matrix(P,gsize,gsize,byrow=T)))
 	
 	} else if(method=="MC"){
+		t1 <- Sys.time()
+		
 		ITER <- round(ITER)
-		mcvals <- rsmc(rs,pooled,ITER,corrGridSpec,comment)
+		
+		if(!adaptive){
+			mcvals <- rsmc.fix(rs,hpsim,ITER,corrGridSpec,comment)
+		} else if(!is.null(symchoice)){
+			if(is.null(rs$f$pdef)||is.null(rs$g$pdef)) stop("Cannot perform symmetric adaptive simulations -- need identical 'pdef' objects present in rs$f and rs$g objects")
+			mcvals <- rsmc.sym(rs,symchoice=symchoice,hpsim,h0sim,ITER,corrGridSpec,comment)
+		} else {
+			mcvals <- rsmc.asym(rs,hpsim,h0sim,ITER,corrGridSpec,comment)
+		}
+		
 		p <- p.temp <- as.vector(t(mcvals))
 		
 		if(test=="lower") p <- 1-p
@@ -270,11 +285,13 @@ tolerance <- function(rs, pooled, test = "upper", method = "ASY", reduce = 1, IT
 		}
 		
 		if(comment){ 
-			cat("\n\n")
-			print(date())
-		}
+			t2 <- Sys.time()
+			cat("\n")
+			print(t2-t1)
+		}	
 		return(list(X=seq(xr[1],xr[2],length=gsize),Y=seq(yr[1],yr[2],length=gsize),Z=NA,P=matrix(p,gsize,gsize,byrow=T)))
 	} else {
 		stop("'method' must be one of 'ASY' or 'MC'")
 	}
 }
+

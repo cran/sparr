@@ -1,5 +1,11 @@
 
 importFrom(MASS,mvrnorm)
+
+importFrom("grDevices", "contourLines", "heat.colors")
+importFrom("graphics", "contour", "plot")
+importFrom("stats", "IQR", "density", "median", "na.omit", "optimise","pnorm", "quantile")
+importFrom("utils", "setTxtProgressBar", "txtProgressBar")
+
 import(spatstat,rgl)
 
 export(KBivN,KBivQ,OS,NS,LSCV.density,LSCV.risk,bivariate.density,risk,tolerance)

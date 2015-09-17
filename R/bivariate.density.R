@@ -188,7 +188,8 @@ bivariate.density <- function(data, ID = NULL, pilotH = NULL, globalH = pilotH, 
 			}
 			
 			if(!identical_windows(WIN,pdef$WIN)) stop("'pdef' window object must be identical to current 'WIN'")
-
+			
+			pilotH <- pdef$pilotH
 			total_pilot_f_values <- as.vector(t(pdef$Zm))
 			corrGridSpec <- apply(data,1,getNearest,gridx=xdatarange,gridy=ydatarange,WIN=WIN)
 			spec_pilot_f_values <- total_pilot_f_values[corrGridSpec]
@@ -220,7 +221,7 @@ bivariate.density <- function(data, ID = NULL, pilotH = NULL, globalH = pilotH, 
 				extraH[!is.na(extraH)][extraH[!is.na(extraH)] > beta.hM] <- beta.hM 
 			}
 		}
-    } else {
+	} else {
         h <- rep(pilotH,nrow(data))
 		if(use.ppp.methods){
 			if(comment) cat("calculating density and edge-correcting if elected...\n")
@@ -228,7 +229,7 @@ bivariate.density <- function(data, ID = NULL, pilotH = NULL, globalH = pilotH, 
 			corrGridSpec <- apply(data,1,getNearest,gridx=xdatarange,gridy=ydatarange,WIN=WIN)
 			if(!is.null(atExtraCoords))	corrGridExtra <- apply(atExtraCoords,1,getNearest,gridx=xdatarange,gridy=ydatarange,WIN=WIN)
 			
-			if(comment) cat("returning...\n\n")
+			if(comment) cat("returning...\n")
 			
 			edg.v <- qhzSpec <- qhzExtra <- 1
 			if(edgeCorrect){
@@ -260,19 +261,20 @@ bivariate.density <- function(data, ID = NULL, pilotH = NULL, globalH = pilotH, 
 						h=pilotH,
 						pilotH=pilotH,
 						globalH=NA,
-						hypoH=NA,
+						hypoH=NULL,
 						zSpec=nfac*raw.v[corrGridSpec]/qhzSpec,
 						zExtra=nfac*extra,
 						WIN=WIN,
 						qhz=matrix(edg.v,res,res,byrow=T),
 						qhzSpec=qhzSpec,
 						qhzExtra=qhzExtra,
-						pilotvals=NA,
+						pdef=NULL,
+						pilotvals=NULL,
 						gamma=NA,
 						counts=counts,
 						data=data)	
 			class(result) <- "bivden"
-			if(comment) print(date())
+			if(comment) cat(date(),"\n")
 			return(result)
 			
 		}
@@ -312,7 +314,7 @@ bivariate.density <- function(data, ID = NULL, pilotH = NULL, globalH = pilotH, 
 		surfB <- surfB/qhzSpec
 		surfB[surfB<=0] <- NA
 		
-		if(comment) cat("returning...\n\n")
+		if(comment) cat("returning...\n")
 		
 		result <- list(	Zm=nfac*matrix(surfA,res,res,byrow=T),
 					X=xrg,
@@ -328,12 +330,13 @@ bivariate.density <- function(data, ID = NULL, pilotH = NULL, globalH = pilotH, 
 					qhz=matrix(qhz,res,res,byrow=T),
 					qhzSpec=qhzSpec,
 					qhzExtra=qhzExtra,
+					pdef=pdef,
 					pilotvals=spec_pilot_f_values,
 					gamma=gamma,
 					counts=counts,
 					data=data)	
 		class(result) <- "bivden"
-		if(comment) print(date())
+		if(comment) cat(date(),"\n")
 		return(result)
 	} else {
 		if(edgeCorrect){
@@ -369,8 +372,8 @@ bivariate.density <- function(data, ID = NULL, pilotH = NULL, globalH = pilotH, 
 		}
 	}
 	
-	if(comment) cat("returning...\n\n")
-	if(comment) print(date())
+	if(comment) cat("returning...\n")
+	if(comment) cat(date(),"\n")
   
     Zm <- matrix(surfA,res,res,byrow=T)
 	if(!adaptive){
@@ -394,6 +397,7 @@ bivariate.density <- function(data, ID = NULL, pilotH = NULL, globalH = pilotH, 
                 qhz=matrix(QA$qhz,res,res,byrow=T),
                 qhzSpec=QB$qhz,
                 qhzExtra=QC$qhz,
+                pdef=pdef,
                 pilotvals=spec_pilot_f_values,
                 gamma=gamma,
 				counts=counts,

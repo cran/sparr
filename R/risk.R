@@ -5,7 +5,7 @@ risk <- function(f, g, delta = 0, log = TRUE, h = NULL, adaptive = FALSE, res = 
 	
 	pooled <- NA
 	org.cls <- class(f)
-	if(comment&&org.cls!="bivden") print(date())
+	if(comment&&org.cls!="bivden") cat(date())
 	
 	if(class(f)!="bivden"){
 		if(class(f)=="data.frame"){
@@ -124,6 +124,6 @@ risk <- function(f, g, delta = 0, log = TRUE, h = NULL, adaptive = FALSE, res = 
 	}
 	
 	if(comment&&org.cls!="bivden") cat("\n\n")
-	if(comment&&org.cls!="bivden") print(date())
+	if(comment&&org.cls!="bivden") cat(date())
     return(result)
 }

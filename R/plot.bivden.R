@@ -30,8 +30,21 @@ plot.bivden <- function(x, ..., display = c("heat","contour","persp","3d"), show
 		}
 		do.call("persp3d", c(list(x=x$X,y=x$Y,z=x$Zm), extras)) 
 		if(show.WIN){
-			gridLocs <- apply(as.data.frame(vertices(x$WIN)),1,getNearest,gridx=sort(rep(x$X,length(x$X))),gridy=rep(x$Y,length(x$Y)),WIN=x$WIN)
-			lines3d(c(vertices(x$WIN)$x,vertices(x$WIN)$x[1]),c(vertices(x$WIN)$y,vertices(x$WIN)$y[1]),c(as.vector(t(x$Zm))[gridLocs],as.vector(t(x$Zm))[gridLocs][1]),lwd=4)
+			w <- x$WIN
+			wv <- vertices(w)
+			tempdf <- as.data.frame(wv)
+			tempmask <- as.im(x)
+			grdcoo <- nearest.raster.point(x=tempdf[,1],y=tempdf[,2],w=tempmask)
+			
+			zgrd <- rep(NA,nrow(tempdf))
+			for(i in 1:nrow(tempdf)) zgrd[i] <- tempmask$v[grdcoo$row[i],grdcoo$col[i]]
+			
+			zgrdw <- c(zgrd,zgrd[1])
+			xl <- c(wv$x,wv$x[1])[-which(is.na(zgrdw))]
+			yl <- c(wv$y,wv$y[1])[-which(is.na(zgrdw))]
+			zgrdw <- zgrdw[-which(is.na(zgrdw))]
+
+			lines3d(xl,yl,zgrdw,lwd=4)
 		}
 	}
 }
