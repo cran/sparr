@@ -1,5 +1,7 @@
 tolerance <- function(rs, test = "upper", method = "ASY", pooled = NULL, symchoice = NULL, hpsim = NULL, h0sim = NULL, reduce = 1, ITER = 1000, exactL2 = TRUE, comment = TRUE){ 
 	
+	t1 <- Sys.time()
+	
 	if(class(rs)!="rrs") stop("'rs' must be of class 'rrs'")
 	
 	if(all(c("upper","lower","double")!=test)) stop("'test' must be one of 'upper', 'lower' or 'double'")
