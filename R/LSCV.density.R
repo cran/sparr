@@ -1,74 +1,228 @@
-LSCV.density <- function(data, hlim = NULL, res = 128, edge = TRUE, WIN = NULL, quick = TRUE, comment = TRUE){
-	if(comment) cat("Initialising...\n")
-	if(!is.null(hlim)) if(hlim[1] >= hlim[2]) stop("invalid h limits")
-	if(class(data)=="ppp"){
-		data.ppp <- data
-	} else if(class(data)=="list"){
-		if(is.null(WIN)) stop("must supply WIN if data is not a ppp.object")
-		if(is.null(data$x)||is.null(data$y)) stop("data list must have two components named 'x' and 'y'")
-		if(length(data$x)!=length(data$y)) stop("data components 'x' and 'y' are of unequal lengths")
-		if(length(data$x)<10) warning("less than 10 case observations!")
-		data.ppp <- ppp(x=data$x,y=data$y,window=WIN)
-	} else if((class(data)=="matrix")||(class(data)=="data.frame")){
-		if(is.null(WIN)) stop("must supply WIN if data is not a ppp.object")
-		if(length(na.omit(data[,1]))!=length(na.omit(data[,2]))) stop("data components 'x' and 'y' are of unequal lengths in 'data'")
-		if(nrow(data)<10) warning("less than 10 case observations!")
-		data.ppp <- ppp(x=data[,1],y=data[,2],window=WIN)
-	} else {
-		stop("invalid data object")
-	}
-	
-	W <- data.ppp$window
-	M <- N <- res+1
-	m <- 0:(M-1)
-	n <- 0:(N-1)
-	del1 <- (W$xrange[2]-W$xrange[1])/(M-1)
-	del2 <- (W$yrange[2]-W$yrange[1])/(N-1) 
-	mgr <- W$xrange[1]+m*del1
-	ngr <- W$yrange[1]+n*del2
-	mcens <- W$xrange[1]+.5*del1+(0:(M-2))*del1
-	ncens <- W$yrange[1]+.5*del2+(0:(N-2))*del2
-	cellinside.vec <- rep(0,(M-1)*(N-1))
-	cellCentroids <- list(x=rep(NA,(M-1)*(N-1)),y=rep(NA,(M-1)*(N-1)))
-	pos <- 0
-	for(i in 1:(M-1)){     
-		for(j in 1:(N-1)){
-			temp.win <- owin(xrange=c(mgr[i],mgr[i+1]),yrange=c(ngr[j],ngr[j+1]))
-			pos <- pos+1
-			temp.cen <- centroid.owin(w=temp.win)
-			cellCentroids$x[pos] <- temp.cen$x
-			cellCentroids$y[pos] <- temp.cen$y
-			if(inside.owin(x=temp.cen$x,y=temp.cen$y,w=W)) cellinside.vec[pos] <- 1
-		}
-	}
-	cellinside.mat <- t(matrix(cellinside.vec,N-1,M-1))
-	selector <- matrix(FALSE,M-1,N-1)
-	selector[matrix(as.logical(cellinside.mat),M-1,N-1)] <- TRUE
-	
-	if(!is.null(data.ppp$marks)) data.ppp$marks <- NULL
-	if(is.null(hlim)){
-		md <- min(nndist(unique(data.ppp)))
-		hlim <- c(md,max(md*50,min(diff(W$xrange),diff(W$yrange))/6))
-	}
-	
-	if(comment) cat(paste("...searching for optimal h within (",hlim[1],",",hlim[2],")...\n",sep=""))
-	if(quick){
-		hopt <- optimise(LSCV.density.single,interval=hlim,data.ppp=data.ppp,res=res,edge=edge,inside=selector)$minimum
-		if(comment) cat("...done.\n")
-		return(hopt)
-	} else {
-		hseq <- seq(hlim[1],hlim[2],length=100)
-		lscv.vec <- c()
-		if(comment) pb <- txtProgressBar(min=0,max=length(hseq),style=3)
-		for(i in 1:length(hseq)){
-			lscv.vec[i] <- LSCV.density.single(hseq[i],data.ppp=data.ppp,res=res,edge=edge,inside=selector)
-			if(comment) setTxtProgressBar(pb,i)
-		}
-		if(comment) close(pb)
-		
-		ind <- which(lscv.vec==min(lscv.vec[!is.na(lscv.vec)]))
-		if((ind==1)||(ind==length(hseq))) warning("bandwidth limit selected -- try a different hlim")
-		
-		return(list(hopt=hseq[!is.na(lscv.vec)][which(lscv.vec[!is.na(lscv.vec)]==min(lscv.vec[!is.na(lscv.vec)]))],lscv=lscv.vec,ind=ind))
-	}
+#' Cross-validation bandwidths for spatial kernel density estimates
+#' 
+#' Isotropic fixed or global (for adaptive) bandwidth selection for standalone 2D density/intensity
+#' based on either unbiased least squares cross-validation (LSCV) or likelihood (LIK) cross-validation.
+#' 
+#' This function implements the bivariate, edge-corrected versions of fixed-bandwidth least squares cross-validation and likelihood cross-validation
+#' as outlined in Sections 3.4.3 and 3.4.4 of Silverman (1986) in order to select an optimal fixed smoothing bandwidth. With \code{type = "adaptive"} it may also be used to select the global bandwidth
+#' for adaptive kernel density estimates, making use of multi-scale estimation (Davies and Baddeley, 2017) via \code{\link{multiscale.density}}.
+#' Note that for computational reasons, the leave-one-out procedure is not performed on the pilot density in the adaptive setting; it
+#' is only performed on the final stage estimate. See also `Warning' below.
+#' 
+#' Where \code{LSCV.density} is based on minimisation of an unbiased estimate of the mean integrated squared error (MISE) of the density, \code{LIK.density} is based on
+#' maximisation of the cross-validated leave-one-out average of the log-likelihood of the density estimate with respect to \eqn{h}.
+#' 
+#' 
+#' @aliases LIK.density
+#' 
+#' @rdname CV
+#' 
+#' @param pp An object of class \code{\link[spatstat]{ppp}} giving the observed
+#'   2D data to be smoothed.
+#' @param hlim An optional vector of length 2 giving the limits of the
+#'   optimisation routine with respect to the bandwidth. If unspecified, the
+#'   function attempts to choose this automatically.
+#' @param hseq An optional increasing sequence of bandwidth values at which to
+#'   manually evaluate the optimisation criterion. Used only in the case
+#'   \code{(!auto.optim && is.null(hlim))}.
+#' @param resolution Spatial grid size; the optimisation will be based on a
+#'   [\code{resolution} \eqn{\times}{x} \code{resolution}] density estimate.
+#' @param edge Logical value indicating whether to edge-correct the density
+#'   estimates used.
+#' @param auto.optim Logical value indicating whether to automate the numerical
+#'   optimisation using \code{\link{optimise}}. If \code{FALSE}, the optimisation
+#'   criterion is evaluated over \code{hseq} (if supplied), or over a seqence of
+#'   values controlled by \code{hlim} and \code{seqres}.
+#' @param seqres Optional resolution of an increasing sequence of bandwidth
+#'   values. Only used if \code{(!auto.optim && is.null(hseq))}.
+#' @param parallelise Numeric argument to invoke parallel processing, giving
+#'   the number of CPU cores to use when \code{!auto.optim} \bold{and} \code{type = "fixed"}. Experimental. Test
+#'   your system first using \code{parallel::detectCores()} to identify the
+#'   number of cores available to you.
+#' @param verbose Logical value indicating whether to provide function progress
+#'   commentary.
+#' @param type A character string; \code{"fixed"} (default) performs classical leave-one-out
+#'   cross-validation for the fixed-bandwidth estimator. Alternatively, \code{"adaptive"} utilises
+#'   multiscale adaptive kernel estimation (Davies & Baddeley, 2017) to run the cross-validation
+#'   in an effort to find a suitable global bandwidth for the adaptive estimator. Note that data points are not `left out' of
+#'   the pilot density estimate when using this option. See also the entry for \code{...}.
+#' @param ... Additional arguments controlling pilot density estimation and multi-scale bandwidth-axis
+#'   resolution when \code{type = "adaptive"}. Relevant arguments are \code{hp}, \code{pilot.density},
+#'   \code{gamma.scale}, and \code{trim} from \code{\link{bivariate.density}}; and \code{dimz} from 
+#'   \code{\link{multiscale.density}}. If \code{hp} is missing and required, the function makes a (possibly recursive)
+#'   call to \code{LSCV.density} to set this using fixed-bandwidth LSCV. The remaining defaults are \code{pilot.density = pp},
+#'   \code{gamma.scale = "geometric"}, \code{trim = 5}, and \code{dimz = resolution}.
+#'   
+#' @return A single numeric value of the estimated bandwidth (if
+#'   \code{auto.optim = TRUE}). Otherwise, a \eqn{[}\code{seqres} \eqn{x} 2\eqn{]} matrix 
+#'   giving the bandwidth sequence and corresponding CV
+#'   function value.
+#'
+#' @section Warning: Leave-one-out CV for bandwidth selection in kernel
+#' density estimation is notoriously unstable in practice and has a tendency to
+#' produce rather small bandwidths, particularly for spatial data. Satisfactory bandwidths are not guaranteed
+#' for every application. This method can also be computationally expensive for
+#' large data sets and fine evaluation grid resolutions. The user may need to
+#' experiment with adjusting \code{hlim} to find a suitable minimum.
+#'
+#' @author T. M. Davies
+#'
+#' @seealso Functions for bandwidth selection in package
+#'   \code{\link{spatstat}}: \code{\link[spatstat]{bw.diggle}};
+#'   \code{\link[spatstat]{bw.ppl}}; \code{\link[spatstat]{bw.scott}};
+#'   \code{\link[spatstat]{bw.frac}}.
+#'
+#' @references
+#' 
+#' Davies, T.M. and Baddeley A. (2017), Fast computation of
+#' spatially adaptive kernel estimates, \emph{Submitted}.
+#' 
+#' Silverman, B.W. (1986), \emph{Density Estimation for Statistics
+#' and Data Analysis}, Chapman & Hall, New York.
+#'
+#' Wand, M.P. and Jones,
+#' C.M., 1995. \emph{Kernel Smoothing}, Chapman & Hall, London.
+#'
+#' @examples
+#' 
+#' data(pbc)
+#' pbccas <- split(pbc)$case
+#' 
+#' LIK.density(pbccas)
+#' LSCV.density(pbccas)
+#'
+#' \dontrun{
+#' #* FIXED 
+#' 
+#' # custom limits
+#' LIK.density(pbccas,hlim=c(0.01,4))
+#' LSCV.density(pbccas,hlim=c(0.01,4))
+#' 
+#' # disable edge correction
+#' LIK.density(pbccas,hlim=c(0.01,4),edge=FALSE)
+#' LSCV.density(pbccas,hlim=c(0.01,4),edge=FALSE)
+#' 
+#' # obtain objective function
+#' hcv <- LIK.density(pbccas,hlim=c(0.01,4),auto.optim=FALSE)
+#' plot(hcv);abline(v=hcv[which.max(hcv[,2]),1],lty=2,col=2)
+#' 
+#' #* ADAPTIVE
+#' LIK.density(pbccas,type="adaptive")
+#' LSCV.density(pbccas,type="adaptive")
+#'  
+#' # change pilot bandwidth used
+#' LIK.density(pbccas,type="adaptive",hp=2)
+#' LSCV.density(pbccas,type="adaptive",hp=2)
+#' } 
+#' 
+#' @export
+LSCV.density <- function(pp,hlim=NULL,hseq=NULL,resolution=64,edge=TRUE,auto.optim=TRUE,
+                         type=c("fixed","adaptive"),seqres=30,parallelise=NULL,verbose=TRUE,...){
+
+  if(class(pp)!="ppp") stop("data object 'pp' must be of class \"ppp\"")
+  W <- Window(pp)
+  
+  if(is.null(hlim)){
+    ppu <- pp
+    marks(ppu) <- NULL
+    md <- min(nndist(unique(ppu)))
+    hlim <- c(md,max(md*50,min(diff(W$xrange),diff(W$yrange))/6))
+  } else {
+    hlim <- checkran(hlim,"'hlim'")
+  }
+  
+  typ <- type[1]
+  if(typ=="fixed"){
+    if(auto.optim){
+      if(verbose) cat("Searching for optimal h in ",prange(hlim),"...",sep="")
+      result <- optimise(LSCV.density.spatial.single,interval=hlim,pp=pp,res=resolution,edge=edge)$minimum
+      if(verbose) cat("Done.\n")
+    } else {
+      if(is.null(hseq)) hseq <- seq(hlim[1],hlim[2],length=seqres)
+      hn <- length(hseq)
+      if(is.null(parallelise)){
+        lscv.vec <- rep(NA,hn)
+        if(verbose) pb <- txtProgressBar(1,hn)
+        for(i in 1:hn){
+          lscv.vec[i] <- LSCV.density.spatial.single(hseq[i],pp,resolution,edge)
+          if(verbose) setTxtProgressBar(pb,i)
+        }
+        if(verbose) close(pb)
+      } else {
+        ncores <- detectCores()
+        if(verbose) cat(paste("Evaluating criterion on",parallelise,"/",ncores,"cores..."))
+        if(parallelise>ncores) stop("cores requested exceeds available count")
+        registerDoParallel(cores=parallelise)
+        lscv.vec <- foreach(i=1:hn,.packages="spatstat",.combine=c) %dopar% {
+          return(LSCV.density.spatial.single(hseq[i],pp,resolution,edge))
+        }
+        if(verbose) cat("Done.\n")
+      }
+      result <- cbind(hseq,lscv.vec)
+      dimnames(result)[[2]] <- c("h","CV")
+    }
+  } else if(typ=="adaptive"){
+
+    ellip <- list(...)
+    
+    if(is.null(ellip$hp)){
+      if(verbose) cat("Selecting pilot bandwidth...")
+      hp <- LSCV.density(pp,verbose=FALSE)
+      if(verbose) cat(paste("Done.\n   [ Found hp =",hp,"]\n"))
+    } else {
+      hp <- ellip$hp
+    }
+    
+    if(is.null(ellip$pilot.density)){
+      pilot.density <- pp
+    } else {
+      pilot.density <- ellip$pilot.density
+    }
+    
+    if(is.null(ellip$gamma.scale)){
+      gamma.scale <- "geometric"
+    } else {
+      gamma.scale <- ellip$gamma.scale
+    }
+    
+    if(is.null(ellip$trim)){
+      trim <- 5
+    } else {
+      trim <- ellip$trim
+    }
+    
+    if(is.null(ellip$dimz)){
+      dimz <- resolution
+    } else {
+      dimz <- ellip$dimz
+    }
+    
+    if(verbose) cat("Computing multi-scale estimate...")
+    hhash <- mean(hlim)
+    msobject <- multiscale.density(pp,h0=hhash,hp=hp,h0fac=hlim/hhash,edge=ifelse(edge,"uniform","none"),resolution=resolution,dimz=dimz,gamma.scale=gamma.scale,trim=trim,intensity=TRUE,pilot.density=pilot.density,verbose=FALSE)
+    if(verbose) cat("Done.\n")
+    
+    h0range <- range(as.numeric(names(msobject$z)))
+    if(auto.optim){
+      if(verbose) cat("Searching for optimal h0 in ",prange(h0range),"...",sep="")
+      h0opt <- optimise(ms.loo,interval=h0range,object=msobject)$minimum
+      if(verbose) cat("Done.\n")
+      return(h0opt)
+    } else {
+      if(is.null(hseq)) hseq <- seq(h0range[1],h0range[2],length=seqres)
+      hn <- length(hseq)
+      lscv.vec <- rep(NA,hn)
+      if(verbose) pb <- txtProgressBar(1,hn)
+      for(i in 1:hn){
+        lscv.vec[i] <- ms.loo(hseq[i],msobject)
+        if(verbose) setTxtProgressBar(pb,i)
+      }
+      if(verbose) close(pb)
+      
+      result <- cbind(hseq,lscv.vec)
+      dimnames(result)[[2]] <- c("h0","CV")
+    }
+  } else stop("invalid 'type'")
+  
+  return(result)
 }

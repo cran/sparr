@@ -1,14 +1,12 @@
-	CHANGES IN sparr VERSION 0.3-7
-	   
-    o Modifications to ‘tolerance’ to stabilise and improve Monte-Carlo (MC) tolerance contours. ‘pooled’ is now no longer a required argument for MC contours. The capability of computing adaptive-symmetric and adaptive-asymmetric MC contours is available. New choices for specifying bandwidths at each iteration of the MC loop are provided for both fixed- and adaptive-bandwidth estimators. See function documentation.
+sparr v2.1-10 (Release date: 2017-07-17)
+==============
 
-    o Speedier plotting of borders and contours when producing the interactive 3D visualisations of a density or risk surface via ‘plot.bivden’ and ‘plot.rrs’.
+--- MAJOR CHANGES since versions <= 0.3-8; NO BACKWARDS COMPATIBILITY ---
+--- Accompanying tutorial currently submitted for publication; contact maintainer for preprint --
+--- User is directed to the examples as part of help("sparr") for further assistance ---
 
-    o General tidying up of output to the console during the execution of certain functions.
-
-
-	CHANGES IN sparr VERSION 0.3-4
-	
-   
-    o Added functionality to ‘bivariate.density’ to allow the external specification of a pilot density for adaptive estimation through the new argument ‘pref’. See function documentation.
-
+* Usage of all existing functions bivariate.density, OS, NS, LSCV.density, LSCV.risk, risk, tolerance, as well as associated S3 methods have changed for overall consistency, speed, and improved compatibility with spatstat objects.
+* New functions for spatial bandwidth selection (LIK.density, BOOT.density), and extension of existing functions to cope with selection of a global bandwidth for adaptive smoothing.
+* New functions for multiscale adaptive kernel density estimation (multiscale.density, multiscale.slice).
+* New functions for spatiotemporal density and relative risk estimation, and bandwidth selection (OS.spattemp, NS.spattemp, LSCV.spattemp, LIK.spattemp, BOOT.spattemp, spattemp.density, spattemp.risk, spattemp.slice).
+* New datasets (burk, fmd)

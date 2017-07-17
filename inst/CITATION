@@ -1,21 +1,17 @@
 citHeader("To cite sparr in publications use:")
 
-citEntry(entry = "Article",
-  title        = "{sparr}: Analyzing Spatial Relative Risk Using Fixed and Adaptive Kernel Density Estimation in {R}",
-  author       = personList(as.person("Tilman M. Davies"),
-                   as.person("Martin L. Hazelton"),
-                   as.person("Jonathan C. Marshall")),
-  journal      = "Journal of Statistical Software",
-  year         = "2011",
-  volume       = "39",
-  number       = "1",
-  pages        = "1--14",
-  url          = "http://www.jstatsoft.org/v39/i01/",
+citEntry(entry = "Unpublished",
+  title        = "Tutorial on kernel estimation of continuous spatial and spatiotemporal relative risk with accompanying instruction in {R}",
+  author       = personList(as.person("T. M. Davies"),
+                   as.person("J. C. Marshall"),
+                   as.person("M. L. Hazelton")),
+  note      = "Submitted for publication",
+  year         = "2017",
+  pages        = "1--30",
 
   textVersion  =
-  paste("Tilman M. Davies, Martin L. Hazelton, Jonathan C. Marshall (2011).",
-        "sparr: Analyzing Spatial Relative Risk Using Fixed and Adaptive Kernel Density Estimation in R.",
-        "Journal of Statistical Software, 39(1), 1-14.",
-        "URL http://www.jstatsoft.org/v39/i01/.")
+  paste("T. M. Davies, J. C. Marshall, M. L. Hazelton (2017).",
+        "Tutorial on kernel estimation of continuous spatial and spatiotemporal relative risk with accompanying instruction in {R};",
+        "Submitted for publication.")
 )
 

@@ -1,299 +1,212 @@
-tolerance <- function(rs, test = "upper", method = "ASY", pooled = NULL, symchoice = NULL, hpsim = NULL, h0sim = NULL, reduce = 1, ITER = 1000, exactL2 = TRUE, comment = TRUE){ 
-	
-	t1 <- Sys.time()
-	
-	if(class(rs)!="rrs") stop("'rs' must be of class 'rrs'")
-	
-	if(all(c("upper","lower","double")!=test)) stop("'test' must be one of 'upper', 'lower' or 'double'")
-	
-	if(reduce<=0) stop("'reduce' must be greater than zero or less than or equal to one")
-	if(reduce>1) stop("'reduce' must be greater than zero or less than or equal to one")
-
-	adaptive <- (length(rs$f$hypoH)>1)
-	fvec <- as.vector(t(rs$f$Zm))
-	gvec <- as.vector(t(rs$g$Zm))
-
-	xr <- range(rs$f$X)
-	yr <- range(rs$f$Y)
-	gsize <- ceiling(reduce*length(rs$f$X))
-
-	if(gsize < 10) warning("given reduction results in smaller p-value grid than 10x10")
-
-	grx <- sort(rep(seq(xr[1],xr[2],length=gsize),gsize))
-	gry <- rep(seq(yr[1],yr[2],length=gsize),gsize)
-		
-	if(reduce==1){
-		corrGridSpec <- 1:(length(rs$f$X)^2)
-	} else {
-		corrGridSpec <- apply(as.matrix(data.frame(cbind(grx,gry))),1,getNearest,gridx=sort(rep(rs$f$X,length(rs$f$X))),gridy=rep(rs$f$Y,length(rs$f$Y)),WIN=rs$f$WIN,anypoint=T)
-	}
-
-
-	if(method=="ASY"){
-		
-		if(is.null(pooled)) stop("'pooled' density estimate required for asymptotics")
-		
-		if(class(pooled)!="bivden") stop("'pooled' must be an object of class 'bivden'")
-	
-		if(!all(c(length(rs$f$zVec)==length(pooled$zVec),length(rs$g$zVec)==length(pooled$zVec)))){
-			stop("'pooled' appears to have been estimated using a different evaluation grid to that used in 'rs' - evaluation grids must be identical")
-		}
-		
-		if(!all(c(identical_windows(rs$f$WIN,pooled$WIN),identical_windows(rs$g$WIN,pooled$WIN)))){
-			stop("'pooled$WIN' does not appear to match study region window used in 'rs' - study regions must be identical")
-		}
-		
-		if(length(pooled$hypoH)!=length(rs$f$hypoH)) stop("smoothing approach (fixed or adaptive) of 'pooled' must match approach used in 'rs'")
-	
-		edgef <- range(as.vector(rs$f$qhz),na.rm=T)[1]!=range(as.vector(rs$f$qhz),na.rm=T)[2]
-		edgep <- range(as.vector(pooled$qhz),na.rm=T)[1]!=range(as.vector(pooled$qhz),na.rm=T)[2]
-	
-		if((edgef+edgep==1)) stop("edge-correction is inconsistent. all densities must be either edge-corrected or not.")
-	
-		datarange.list <- list(x=seq(xr[1],xr[2],length=gsize),y=seq(yr[1],yr[2],length=gsize))
-		
-		if(edgep){
-			if(adaptive){
-				if(comment) cat("\n--Adaptive-bandwidth asymptotics--\n")
-				if(comment) cat("calculating integrals K2...\n")
-			
-				if(comment) cat("--f--\n")
-				hypoQuan <- unique(quantile(sqrt(0.5*as.vector(t(rs$f$hypoH))^2)[corrGridSpec],(1:100)/100,na.rm=T))
-				corrQuan <- apply(as.matrix(sqrt(0.5*as.vector(t(rs$f$hypoH))^2)[corrGridSpec]),1,idQuan,q=hypoQuan)
-				qQuan <- apply(as.matrix(hypoQuan),1,run_ppp,data=rs$f$data,xy=datarange.list,WIN=rs$f$WIN,counts=rs$f$counts)
-				fk2 <- rep(-1,gsize*gsize)
-				fk2[is.na(sqrt(0.5*as.vector(t(rs$f$hypoH))^2)[corrGridSpec])] <- NA
-				for(i in 1:length(hypoQuan)) fk2[which(corrQuan==i)] <- as.vector(qQuan[[i]]$edg$v)[which(corrQuan==i)]
-				fk2 <- (1/(4*pi))*fk2 
-				
-				if(comment) cat("--g--\n")
-				hypoQuan <- unique(quantile(sqrt(0.5*as.vector(t(rs$g$hypoH))^2)[corrGridSpec],(1:100)/100,na.rm=T))
-				corrQuan <- apply(as.matrix(sqrt(0.5*as.vector(t(rs$g$hypoH))^2)[corrGridSpec]),1,idQuan,q=hypoQuan)
-				qQuan <- apply(as.matrix(hypoQuan),1,run_ppp,data=rs$g$data,xy=datarange.list,WIN=rs$f$WIN,counts=rs$g$counts)
-				gk2 <- rep(-1,gsize*gsize)
-				gk2[is.na(sqrt(0.5*as.vector(t(rs$g$hypoH))^2)[corrGridSpec])] <- NA
-				for(i in 1:length(hypoQuan)) gk2[which(corrQuan==i)] <- as.vector(qQuan[[i]]$edg$v)[which(corrQuan==i)]
-				gk2 <- (1/(4*pi))*gk2 
-				
-				if(exactL2){
-					xrL <- sort(rep(seq(-4,4,length=10),10))
-					yrL <- rep(seq(-4,4,length=10),10)
-					grL <- matrix(c(xrL,yrL),100,2)
-					Lsq_gr <- apply(grL,1,Lsq,uh=c(0,0,1),WIN=NULL)
-					
-					
-					if(comment) cat("calculating integrals L2...\n--f--\n")
-					coords <- as.matrix(data.frame(cbind(grx,gry,as.vector(t(rs$f$hypoH))[corrGridSpec])))
-					fL2 <- c()
-					for(i in 1:nrow(coords)){
-						if(!inside.owin(coords[i,1],coords[i,2],rs$f$WIN)||is.na(coords[i,3])){
-							tempLsq <- NA
-						} else {
-							temp.xrL <- xrL*coords[i,3]+coords[i,1]
-							temp.yrL <- yrL*coords[i,3]+coords[i,2]
-							tempLsq1 <- Lsq_gr[inside.owin(temp.xrL,temp.yrL,rs$f$WIN)]
-							temp.ygap <- temp.yrL[2]-temp.yrL[1]
-							tempLsq <- sum((tempLsq1/(coords[i,3]^4))*temp.ygap^2)
-						}
-						fL2 <- append(fL2,tempLsq)
-					}		
-					
-					S1rzK <- (1/(as.vector(t(rs$f$qhz))[corrGridSpec]^2))*(2*fk2 + 0.25*fL2)
-				
-					
-					
-					if(comment) cat("--g--\n\n")
-					coords <- as.matrix(data.frame(cbind(grx,gry,as.vector(t(rs$g$hypoH))[corrGridSpec])))
-					gL2 <- c()
-					for(i in 1:nrow(coords)){
-						if(!inside.owin(coords[i,1],coords[i,2],rs$f$WIN)||is.na(coords[i,3])){
-							tempLsq <- NA
-						} else {
-							temp.xrL <- xrL*coords[i,3]+coords[i,1]
-							temp.yrL <- yrL*coords[i,3]+coords[i,2]
-							tempLsq <- Lsq_gr[inside.owin(temp.xrL,temp.yrL,rs$f$WIN)]
-							temp.ygap <- temp.yrL[2]-temp.yrL[1]
-							tempLsq <- sum((tempLsq/(coords[i,3]^4))*temp.ygap^2)
-						}
-						gL2 <- append(gL2,tempLsq)
-					}
-					S2rzK <- (1/(as.vector(t(rs$g$qhz))[corrGridSpec]^2))*(2*gk2 + 0.25*gL2)
-				
-					
-					
-					
-				} else {
-					if(comment) cat("calculating integrals L2...\n--f--\n")
-					S1rzK <- (1/(as.vector(t(rs$f$qhz))[corrGridSpec]^2))*(2*fk2 + .5*fk2)
-					if(comment) cat("--g--\n\n")
-					S2rzK <- (1/(as.vector(t(rs$g$qhz))[corrGridSpec]^2))*(2*gk2 + .5*gk2)
-				}
-				
-				denominator <- sqrt(((S1rzK*rs$f$gamma^2)/(sum(rs$f$counts)*rs$f$globalH^2))+((S2rzK*rs$g$gamma^2)/(sum(rs$g$counts)*rs$g$globalH^2)))
-			} else {
-				if(comment) cat("\n--Fixed-bandwidth asymptotics--\n")
-				if(comment) cat("calculating integrals K2...")
-			
-				k2fix <- (1/(4*pi))*as.vector(run_ppp(data=pooled$data,xy=datarange.list,h=(sqrt(0.5*pooled$pilotH^2)),WIN=pooled$WIN,counts=pooled$counts)$edg$v)
-				
-				if(comment) cat("done.\n\n")
-				h <- unique(pooled$h)
-				RrzK <- k2fix/(as.vector(t(pooled$qhz))[corrGridSpec]^2)
-				denominator <- sqrt(RrzK*(sum(rs$f$counts)^(-1)+sum(rs$g$counts)^(-1)))/(h*sqrt(as.vector(t(pooled$Zm)))[corrGridSpec])
-			}
-		} else {
-			
-			if(adaptive){
-				if(comment) cat("\n--Adaptive-bandwidth asymptotics--\n")
-				if(comment) cat("calculating integrals K and K2...\n")
-			
-				if(comment) cat("--f--\n")
-				hypoQuan <- unique(quantile(as.vector(t(rs$f$hypoH))[corrGridSpec],(1:100)/100,na.rm=T))
-				corrQuan <- apply(as.matrix(as.vector(t(rs$f$hypoH))[corrGridSpec]),1,idQuan,q=hypoQuan)
-				qQuan <- apply(as.matrix(hypoQuan),1,run_ppp,data=rs$f$data,xy=datarange.list,WIN=rs$f$WIN,counts=rs$f$counts)
-				fk <- rep(-1,gsize*gsize)
-				fk[is.na(as.vector(t(rs$f$hypoH))[corrGridSpec])] <- NA
-				for(i in 1:length(hypoQuan)) fk[which(corrQuan==i)] <- as.vector(qQuan[[i]]$edg$v)[which(corrQuan==i)]
-				
-				hypoQuan <- unique(quantile(sqrt(0.5*as.vector(t(rs$f$hypoH))^2)[corrGridSpec],(1:100)/100,na.rm=T))
-				corrQuan <- apply(as.matrix(sqrt(0.5*as.vector(t(rs$f$hypoH))^2)[corrGridSpec]),1,idQuan,q=hypoQuan)
-				qQuan <- apply(as.matrix(hypoQuan),1,run_ppp,data=rs$f$data,xy=datarange.list,WIN=rs$f$WIN,counts=rs$f$counts)
-				fk2 <- rep(-1,gsize*gsize)
-				fk2[is.na(sqrt(0.5*as.vector(t(rs$f$hypoH))^2)[corrGridSpec])] <- NA
-				for(i in 1:length(hypoQuan)) fk2[which(corrQuan==i)] <- as.vector(qQuan[[i]]$edg$v)[which(corrQuan==i)]
-				fk2 <- (1/(4*pi))*fk2 
-				
-				
-				if(comment) cat("--g--\n")
-				hypoQuan <- unique(quantile(as.vector(t(rs$g$hypoH))[corrGridSpec],(1:100)/100,na.rm=T))
-				corrQuan <- apply(as.matrix(as.vector(t(rs$g$hypoH))[corrGridSpec]),1,idQuan,q=hypoQuan)
-				qQuan <- apply(as.matrix(hypoQuan),1,run_ppp,data=rs$g$data,xy=datarange.list,WIN=rs$g$WIN,counts=rs$g$counts)
-				gk <- rep(-1,gsize*gsize)
-				gk[is.na(as.vector(t(rs$g$hypoH))[corrGridSpec])] <- NA
-				for(i in 1:length(hypoQuan)) gk[which(corrQuan==i)] <- as.vector(qQuan[[i]]$edg$v)[which(corrQuan==i)]
-				
-				hypoQuan <- unique(quantile(sqrt(0.5*as.vector(t(rs$g$hypoH))^2)[corrGridSpec],(1:100)/100,na.rm=T))
-				corrQuan <- apply(as.matrix(sqrt(0.5*as.vector(t(rs$g$hypoH))^2)[corrGridSpec]),1,idQuan,q=hypoQuan)
-				qQuan <- apply(as.matrix(hypoQuan),1,run_ppp,data=rs$g$data,xy=datarange.list,WIN=rs$g$WIN,counts=rs$g$counts)
-				gk2 <- rep(-1,gsize*gsize)
-				gk2[is.na(sqrt(0.5*as.vector(t(rs$g$hypoH))^2)[corrGridSpec])] <- NA
-				for(i in 1:length(hypoQuan)) gk2[which(corrQuan==i)] <- as.vector(qQuan[[i]]$edg$v)[which(corrQuan==i)]
-				gk2 <- (1/(4*pi))*gk2 
-				
-				if(exactL2){
-					xrL <- sort(rep(seq(-4,4,length=10),10))
-					yrL <- rep(seq(-4,4,length=10),10)
-					grL <- matrix(c(xrL,yrL),100,2)
-					Lsq_gr <- apply(grL,1,Lsq,uh=c(0,0,1),WIN=NULL)
-					
-					if(comment) cat("calculating integrals L2...\n--f--\n")
-					coords <- as.matrix(data.frame(cbind(grx,gry,as.vector(t(rs$f$hypoH))[corrGridSpec])))
-					fL2 <- c()
-					for(i in 1:nrow(coords)){
-						if(!inside.owin(coords[i,1],coords[i,2],rs$f$WIN)||is.na(coords[i,3])){
-							tempLsq <- NA
-						} else {
-							#h <<- coords[i,3]
-							temp.xrL <- xrL*coords[i,3]+coords[i,1]
-							temp.yrL <- yrL*coords[i,3]+coords[i,2]
-							tempLsq1 <- Lsq_gr[inside.owin(temp.xrL,temp.yrL,rs$f$WIN)]
-							temp.ygap <- temp.yrL[2]-temp.yrL[1]
-							tempLsq <- sum((tempLsq1/(coords[i,3]^4))*temp.ygap^2)
-						}
-						fL2 <- append(fL2,tempLsq)
-					}		
-					S1rzK <- (1/(fk^2))*(2*fk2 + 0.25*fL2)
-					
-					
-					if(comment) cat("--g--\n\n")
-					coords <- as.matrix(data.frame(cbind(grx,gry,as.vector(t(rs$g$hypoH))[corrGridSpec])))
-					gL2 <- c()
-					for(i in 1:nrow(coords)){
-						if(!inside.owin(coords[i,1],coords[i,2],rs$f$WIN)||is.na(coords[i,3])){
-							tempLsq <- NA
-						} else {
-							temp.xrL <- xrL*coords[i,3]+coords[i,1]
-							temp.yrL <- yrL*coords[i,3]+coords[i,2]
-							tempLsq <- Lsq_gr[inside.owin(temp.xrL,temp.yrL,rs$f$WIN)]
-							temp.ygap <- temp.yrL[2]-temp.yrL[1]
-							tempLsq <- sum((tempLsq/(coords[i,3]^4))*temp.ygap^2)
-						}
-						gL2 <- append(gL2,tempLsq)
-					}
-					S2rzK <- (1/(gk^2))*(2*gk2 + 0.25*gL2)
-				} else {
-					if(comment) cat("calculating integrals L2...\n--f--\n")
-					S1rzK <- (1/(fk^2))*(2*fk2 + .5*fk2)
-					if(comment) cat("--g--\n\n")
-					S2rzK <- (1/(gk^2))*(2*gk2 + .5*gk2)
-				}
-				
-				denominator <- sqrt(((S1rzK*rs$f$gamma^2)/(sum(rs$f$counts)*rs$f$globalH^2))+((S2rzK*rs$g$gamma^2)/(sum(rs$g$counts)*rs$g$globalH^2)))
-			} else {
-				if(comment) cat("\n--Fixed-bandwidth asymptotics--\n")
-				if(comment) cat("calculating integrals K and K2...")
-			
-				kfix <- as.vector(run_ppp(data=pooled$data,xy=datarange.list,h=pooled$pilotH,WIN=pooled$WIN,counts=pooled$counts)$edg$v)
-				k2fix <- (1/(4*pi))*as.vector(run_ppp(data=pooled$data,xy=datarange.list,h=(sqrt(0.5*pooled$pilotH^2)),WIN=pooled$WIN,counts=pooled$counts)$edg$v)
-				
-				if(comment) cat("done.\n\n")
-				
-				RrzK <- k2fix/(kfix^2)
-				denominator <- sqrt(RrzK*(unique(rs$f$h)^(-2)*sum(rs$f$counts)^(-1)+unique(rs$g$h)^(-2)*sum(rs$g$counts)^(-1)))/(sqrt(as.vector(t(pooled$Zm)))[corrGridSpec])
-			}
-		}
-		
-		if(rs$log) {
-			numerator <- as.vector(t(rs$rsM))[corrGridSpec]
-		} else {
-			numerator <- as.vector(t(rs$rsM))[corrGridSpec]-1
-		}
-		Zstandard <- numerator/denominator
-		
-		if(test=="upper"){
-			P <- pnorm(Zstandard,lower.tail=F)
-		} else if (test=="lower"){
-			P <- pnorm(Zstandard,lower.tail=T)
-		} else {
-			P <- 2*pnorm(abs(Zstandard),lower.tail=F)
-		}
-		if(comment){ 
-			t2 <- Sys.time()
-			cat("\n")
-			print(t2-t1)
-		}
-		return(list(X=seq(xr[1],xr[2],length=gsize),Y=seq(yr[1],yr[2],length=gsize),Z=matrix(Zstandard,gsize,gsize,byrow=T),P=matrix(P,gsize,gsize,byrow=T)))
-	
-	} else if(method=="MC"){
-		t1 <- Sys.time()
-		
-		ITER <- round(ITER)
-		
-		if(!adaptive){
-			mcvals <- rsmc.fix(rs,hpsim,ITER,corrGridSpec,comment)
-		} else if(!is.null(symchoice)){
-			if(is.null(rs$f$pdef)||is.null(rs$g$pdef)) stop("Cannot perform symmetric adaptive simulations -- need identical 'pdef' objects present in rs$f and rs$g objects")
-			mcvals <- rsmc.sym(rs,symchoice=symchoice,hpsim,h0sim,ITER,corrGridSpec,comment)
-		} else {
-			mcvals <- rsmc.asym(rs,hpsim,h0sim,ITER,corrGridSpec,comment)
-		}
-		
-		p <- p.temp <- as.vector(t(mcvals))
-		
-		if(test=="lower") p <- 1-p
-		if(test=="double"){
-			p[which(p.temp<=0.5)] <- 2*p.temp[which(p.temp<=0.5)]
-			p[which(p.temp>0.5)] <- 2-2*p.temp[which(p.temp>0.5)]
-		}
-		
-		if(comment){ 
-			t2 <- Sys.time()
-			cat("\n")
-			print(t2-t1)
-		}	
-		return(list(X=seq(xr[1],xr[2],length=gsize),Y=seq(yr[1],yr[2],length=gsize),Z=NA,P=matrix(p,gsize,gsize,byrow=T)))
-	} else {
-		stop("'method' must be one of 'ASY' or 'MC'")
-	}
+#' Tolerance by \emph{p}-value surfaces
+#' 
+#' Calculates a \emph{p}-value surface based on asymptotic theory or
+#' Monte-Carlo (MC) permutations describing the extremity of risk given a fixed
+#' or adaptive kernel-smoothed density-ratio, allowing the drawing of
+#' \emph{tolerance contours}.
+#' 
+#' This function implements developments in Hazelton and Davies (2009) (fixed)
+#' and Davies and Hazelton (2010) (adaptive) to compute pointwise
+#' \emph{p}-value surfaces based on asymptotic theory of kernel-smoothed
+#' relative risk surfaces. Alternatively, the user may elect to calculate the
+#' \emph{p}-value surfaces using Monte-Carlo methods (see Kelsall and Diggle,
+#' 1995). Superimposition upon a plot of the risk surface contours of these
+#' \emph{p}-values at given significance levels (i.e. ``tolerance contours'')
+#' can be an informative way of exploring the statistical significance of the
+#' extremity of risk across the defined study region.
+#' 
+#' The Monte-Carlo method, while not dependent on asymptotic theory, is
+#' computationally expensive and it has been suggested might have some
+#' undesirable practical consequences in certain settings (Hazelton and Davies,
+#' 2009). When performing the MC simulations, the same global (and pilot, if
+#' necessary) bandwidths and edge-correction regimen is employed as were used
+#' in the initial density estimates of the observed data. With regard to
+#' arguments to be passed to internal calls of \code{\link{risk}}, the user
+#' should take care to use \code{...} to set the \code{epsilon} value to match
+#' that which was used in creation of the object passed to \code{rs} (if this
+#' was set to a non-default value). Furthermore, if performing MC simulations
+#' for the adaptive relative risk function, the function borrows the value of
+#' the \code{beta} argument to speed things up via partitioning, and the user
+#' should additionally access \code{...} to set the same \code{pilot.symmetry}
+#' value as was used for creation of the object passed to \code{rs}, in the
+#' same way as for any non-default use of \code{epsilon}. This will ensure the
+#' simulations are all performed under the same conditions as the original risk
+#' function.
+#' 
+#' The asymptotic approach to the \emph{p}-value calculation can be
+#' advantageous over a Monte-Carlo method, which can lead to excessive
+#' computation time for adaptive risk surfaces and large datasets. See the
+#' aforementioned references for further comments.
+#' 
+#' Choosing different options for the argument \code{test} simply manipulates
+#' the `direction' of the p-values. That is, plotting tolerance contours at a
+#' significance level of 0.05 for a p-value surface calculated with \code{test
+#' = "double"} is equivalent to plotting tolerance contours at significance
+#' levels of 0.025 and 0.975 for \code{test = "upper"}.
+#' 
+#' Implementation of the Monte-Carlo contours for the fixed-bandwidth
+#' estimator simply involves random allocation of case/control marks and
+#' re-estimation of the risk surface \code{ITER} times, against which the
+#' original estimate is compared. The bandwidth(s) for case and control
+#' densities in the permuted estimates are controlled by \code{hpsim}. If your
+#' risk surface is adaptive, \code{hpsim} is used to control the pilot
+#' bandwidths, \code{h0sim} the global bandwidths. In particular, for the
+#' adaptive symmetric estimator (Davies et al. 201), it is assumed that the
+#' original estimate was itself calculated as a symmetric estimate via use of
+#' the \code{pdef} argument. The \code{symchoice} argument governs the specific
+#' permuted data set to use for the pilot estimate, and if \code{hpsim} is
+#' \code{NULL}, the pilot bandwidth thereof is taken from the stored
+#' \code{pdef} object in the original estimate. An error will occur if you
+#' attempt to set \code{symchoice} with an \code{rs} argument in this function
+#' that does not contain density estimates with present \code{pdef} objects of
+#' class \code{"bivden"}. See the help file for \code{\link{bivariate.density}}
+#' for details on using the \code{pdef} argument.
+#' 
+#' In addition to the usage noted above, you may define either \code{hpsim}
+#' and/or \code{h0sim} as functions which re-calculate the case and control
+#' pilot (or fixed) bandwidth(s) and the global bandwidth(s) at each iteration,
+#' based on the data set of the permuted case/control marks. If so, these must
+#' strictly be functions that take the case data as the first argument and the
+#' control data as the second argument, each as a two-column matrix of the x-y
+#' coordinates. The function must strictly return a numeric vector of length 1
+#' or 2; these entries to be assigned to the relevant density estimates as per
+#' the usage notes on supply of a numeric vector for \code{hpsim}. Take care --
+#' warnings will be issued if, for example, you specify a \code{hpsim} function
+#' that returns two numeric values, but your \code{rs} object is a
+#' symmetric-adaptive estimate (in which case it only makes sense to yield one
+#' pilot bandwidth)!
+#' 
+#' @param rs An object of class \code{\link{rrs}} giving the estimated relative
+#'   risk function for which to calculate the \emph{p}-value surface.
+#' @param method A character string specifying the method of calculation.
+#'   \code{"ASY"} (default) instructs the function to compute the \emph{p}-values
+#'   using asymptotic theory. \code{"MC"} computes the values by random
+#'   permutations of the data. See `Details'.
+#' @param ref.density Required if \code{rs} is based on fixed-bandwidth
+#'   estimates of the case and control densities and \code{method = "ASY"}.
+#'   Either a pixel \code{\link[spatstat]{im}}age or an object of class
+#'   \code{\link{bivden}} giving the reference density to use in asymptotic
+#'   formulae. May be unnormalised. Ignored if \code{rs} is based on adaptive
+#'   kernel estimates or if \code{method = "MC"}.
+#' @param beta A numeric value \eqn{0 <} \code{beta} \eqn{< 1} giving the
+#'   fineness of the adaptive bandwidth partitioning to use for calculation of
+#'   the required quantities for asymptotic adaptive \emph{p}-value surfaces.
+#'   Smaller values provide more accurate bandwidth bins at the cost of
+#'   additional computing time, see Davies and Baddeley (2017); the default is
+#'   sensible in most cases. Ignored if \code{rs} is based on fixed-bandwidth
+#'   kernel estimates.
+#' @param ITER Number of iterations for the Monte-Carlo permutations. Ignored
+#'   if \code{method = "ASY"}.
+#' @param parallelise Numeric argument to invoke parallel processing, giving
+#'   the number of CPU cores to use when \code{method = "MC"}. Experimental. Test
+#'   your system first using \code{parallel::detectCores()} to identify the
+#'   number of cores available to you.
+#' @param verbose Logical value indicating whether to print function progress
+#'   during execution.
+#' @param ...  Additional arguments to be passed to \code{\link{risk}} when
+#'   \code{method = "MC"}. While most information needed for the MC repetitions
+#'   is implicitly gleaned from the object passed to \code{rs}, this ellipsis is
+#'   typically used to set the appropriate \code{epsilon} and
+#'   \code{pilot.symmetry} values for the internal calls to \code{\link{risk}}.
+#'
+#' @return A pixel \code{\link[spatstat]{im}}age of the estimated
+#' \emph{p}-value surface.
+#'
+#' @note The returned \emph{p}-values are geared so that ``smallness''
+#' corresponds to statistical significance of elevated risk, that is, an
+#' upper-tailed test. The complement of the \emph{p}-values will yeild
+#' significance of reduced risk; a lower-tailed test. When using
+#' \code{\link{tol.contour}}, the user can control what type of contours to
+#' display.
+#'
+#' @author T. M. Davies
+#'
+#' @references
+#'
+#' Davies, T.M. and Baddeley A. (2017), Fast computation of
+#' spatially adaptive kernel estimates, \emph{Submitted}.
+#'
+#' Davies, T.M. and Hazelton, M.L. (2010), Adaptive kernel estimation of spatial relative
+#' risk, \emph{Statistics in Medicine}, \bold{29}(23) 2423-2437.
+#'
+#' Hazelton, M.L. and Davies, T.M. (2009), Inference based on kernel estimates
+#' of the relative risk function in geographical epidemiology,
+#' \emph{Biometrical Journal}, \bold{51}(1), 98-109.
+#'
+#' Kelsall, J.E. and Diggle, P.J. (1995), Kernel estimation of relative risk, \emph{Bernoulli},
+#' \bold{1}, 3-16.
+#'
+#' @examples
+#' 
+#' \dontrun{
+#' 
+#' data(pbc)
+#' h0 <- LSCV.risk(pbc,method="hazelton");h0
+#' pbccas <- split(pbc)[[1]]
+#' pbccon <- split(pbc)[[2]]
+#' 
+#' # ASY
+#' riskfix <- risk(pbc,h0=h0)
+#' fixtol1 <- tolerance(riskfix,ref.density=density(pbc,OS(pbc)))
+#' 
+#' riskada <- risk(pbc,h0=h0,adapt=TRUE,hp=NS(pbc),pilot.symmetry="pooled",davies.baddeley=0.025)
+#' adatol1 <- tolerance(riskada)
+#' 
+#' par(mfrow=c(1,2))
+#' plot(riskfix)
+#' tol.contour(fixtol1,levels=c(0.1,0.05,0.01),lty=3:1,add=TRUE)
+#' plot(riskada)
+#' tol.contour(adatol1,levels=c(0.1,0.05,0.01),lty=3:1,add=TRUE)
+#' 
+#'
+#' # MC
+#' fixtol2 <- tolerance(riskfix,method="MC",ITER=200) 
+#' adatol2 <- tolerance(riskada,method="MC",ITER=200,parallelise=4) # ~1 minute with parallelisation
+#' par(mfrow=c(1,2))
+#' plot(riskfix)
+#' tol.contour(fixtol2,levels=c(0.1,0.05,0.01),lty=3:1,add=TRUE)
+#' plot(riskada)
+#' tol.contour(adatol2,levels=c(0.1,0.05,0.01),lty=3:1,add=TRUE)
+#' }
+#' 
+#' 
+#' @export
+tolerance <- function(rs, method = c("ASY", "MC"), ref.density = NULL, beta = 0.025,
+                      ITER = 100, parallelise = NULL, verbose = TRUE, ...){
+  if(!inherits(rs,"rrs")) stop("'rs' argument must be of class \"rrs\"")
+  
+  meth <- method[1]
+  adaf <- !is.null(rs$f$him)
+  adag <- !is.null(rs$g$him)
+  ada <- adaf + adag
+  if(ada==1) stop("case/control smoothing regimens (fixed or adaptive) must be identical")
+  
+  if(meth=="ASY"){
+    if(ada==2){
+      psurf <- tol.asy.ada(rs$f,rs$g,beta,verbose)$p
+    } else {
+      if(is.null(ref.density)) stop("must supply 'ref.density' for fixed-bandwidth asymptotic tolerance contours")
+      if((!inherits(ref.density,"bivden"))&&(!inherits(ref.density,"im"))) stop("'ref.density' must be of class \"bivden\" or \"im\"")
+      if(is.im(ref.density)){
+        ref.density <- list(z=ref.density,q=NULL)
+      #  was:
+      #   rq <- ref.density
+      # 	rq$v[!is.na(rq$v)] <- 1
+      # 	ref.density <- list(z=ref.density,q=rq)
+      }
+      ref.density$z <- ref.density$z/integral(ref.density$z)
+      if(!compatible(rs$f$z,rs$g$z,ref.density$z)) stop("incompatible 'ref.density'... must be evaluated on domain identical to case/control densities")
+      psurf <- tol.asy.fix(rs$f,rs$g,ref.density,verbose)$p
+    }
+  } else if(meth=="MC"){
+    ITER <- checkit(ITER,"'ITER'")
+    if(ada==2){
+      psurf <- im(tol.mc.ada(rs,round(ITER),parallelise,verbose,davies.baddeley=beta,...),xcol=rs$rr$xcol,yrow=rs$rr$yrow)
+    } else {
+      psurf <- im(tol.mc.fix(rs,round(ITER),parallelise,verbose,...),xcol=rs$rr$xcol,yrow=rs$rr$yrow)
+    }
+  } else stop("invalid 'method' argument")
+  
+  return(psurf)
 }
-
+  

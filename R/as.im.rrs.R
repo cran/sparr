@@ -1,1 +1,0 @@
-as.im.rrs <- function(X, ...) return(im(t(X$rsM),xcol=X$f$X,yrow=X$f$Y))
