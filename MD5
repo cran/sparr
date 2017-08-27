@@ -1,6 +1,6 @@
-51faa8a27e07982fe80e04eb74de6708 *DESCRIPTION
+e8dbbcccc3a8bd0298cc71f9c5d9d48b *DESCRIPTION
 032249daabd03f9b4ab94e78dfd2371d *NAMESPACE
-c025d14337760d568834c54c08a34d6c *NEWS
+c4a58e5d65ef13614b014274685b7d08 *NEWS
 1033ff9631dfeaa674a889a110c658ae *R/BAM.single.R
 19093aaf3c5db83f91072f1c67ead8b7 *R/BAMprep.R
 7942638eccebad7d2eec6ad7a857f62c *R/BOOT.density.R
@@ -22,12 +22,12 @@ e926a746a1954fe584ebf686e790132a *R/OS.R
 51f480a6bf576bbb371bcdd464a3370a *R/OS.spattemp.R
 96f7191868f1b60a8838ef39cda78e57 *R/adens.R
 864c1ed1ba042f9aa98e7bb4c5b644e6 *R/available.h0.R
-7a4164fb6bc9cdd57a41f5fbac515d8e *R/bivariate.density.R
-7ebc4f1318cb0480a8888b22bc04a7bf *R/bivden.LOO.R
+2e5ba5c5138ddf5752bd8675d51b46f7 *R/bivariate.density.R
+f97818b86fa47c2269a114104b04d641 *R/bivden.LOO.R
 fb299df937dbd96661ee79e1efa61a2f *R/boot.opt.spatial.adapt.R
 9aba5f0551caeb659476e6664104d423 *R/boot.opt.spatial.fix.R
 3e4fb1e1654e3c1935f189f69219ace9 *R/burk-data.R
-f761aaa40d31d16b79c35304bc9c6124 *R/checking.R
+ca87d7c58e5f7db5a7cf0f388e367dbe *R/checking.R
 ed56557c34dea276f7d8784679a3ee49 *R/edgeh.R
 8c037ac91df6629df4bd1ccb24cd78c7 *R/fft.R
 c428de2369b1997835d698bd142c38b1 *R/fmd-data.R
@@ -85,7 +85,7 @@ cf6a163a46273044e4e91e179ed596fb *man/LSCV.spattemp.Rd
 8b62937ca804471500189fa4b182753c *man/NS.Rd
 49711f77b909d4b577b95cca94f8a0b1 *man/OS.Rd
 4641aa5a75e414b0d0621bebea5988b5 *man/available.h0.Rd
-5bcaa8304c4a8db8627f243add4076c5 *man/bivariate.density.Rd
+9caddbcd0cc5e4cadcbbf600594f4cdf *man/bivariate.density.Rd
 eb29b3d06aba631e6a80d44705e364f7 *man/burk.Rd
 85704b83eab09b35697f8809cadaa06a *man/fft2d.Rd
 6a10e77d4ae49feea8e5f1a0949fc6b4 *man/fmd.Rd
@@ -96,7 +96,7 @@ ec89b8dc44caf7a42789262336ca3a10 *man/plotsparr.Rd
 5dddcf17f253cbef0db98485a99742a1 *man/printsparr.Rd
 aa5a539da39f2f72fe0c0c03cbf89d55 *man/risk.Rd
 d204cc1fe622775e3b925ea23e6adc54 *man/sparr-internal.Rd
-7ac8f6db07476ab32a363a811f3a596d *man/sparr-package.Rd
+b251747f0355c733059e920369df8972 *man/sparr-package.Rd
 76a399bedf64bb5eee256942c3c81d27 *man/spattemp.density.Rd
 a53717068769df11c635201dc7bff685 *man/spattemp.risk.Rd
 c27692ad031ff6bd14cc93c4471e5297 *man/spattemp.slice.Rd

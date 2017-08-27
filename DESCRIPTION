@@ -1,8 +1,8 @@
 Package: sparr
 Type: Package
 Title: Spatial and Spatiotemporal Relative Risk
-Version: 2.1-11
-Date: 2017-08-02
+Version: 2.1-12
+Date: 2017-08-27
 Author: T.M. Davies and J.C. Marshall
 Maintainer: Tilman M. Davies <tdavies@maths.otago.ac.nz>
 Description: Provides functions to estimate kernel-smoothed spatial and spatio-temporal densities and relative risk functions, and perform subsequent inference.
@@ -13,6 +13,6 @@ License: GPL (>= 2)
 LazyLoad: yes
 NeedsCompilation: no
 RoxygenNote: 6.0.1
-Packaged: 2017-08-02 03:51:35 UTC; tdavies
+Packaged: 2017-08-26 23:36:10 UTC; tdavies
 Repository: CRAN
-Date/Publication: 2017-08-02 05:28:20 UTC
+Date/Publication: 2017-08-27 16:21:32 UTC
