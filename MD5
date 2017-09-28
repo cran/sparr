@@ -1,6 +1,6 @@
-e8dbbcccc3a8bd0298cc71f9c5d9d48b *DESCRIPTION
+cf5fa51f0b4111d7823311847c59a3b3 *DESCRIPTION
 032249daabd03f9b4ab94e78dfd2371d *NAMESPACE
-c4a58e5d65ef13614b014274685b7d08 *NEWS
+d29495d7159686540d53fcbff6415982 *NEWS
 1033ff9631dfeaa674a889a110c658ae *R/BAM.single.R
 19093aaf3c5db83f91072f1c67ead8b7 *R/BAMprep.R
 7942638eccebad7d2eec6ad7a857f62c *R/BOOT.density.R
@@ -37,7 +37,7 @@ b7d8ce59e38554dd864e9a971aa2909c *R/kernel2d.R
 c4d1d9b47624d4a41334db6edb7eabf7 *R/ms.loo.R
 7a91be377cf7587733a983c6f4a509d9 *R/multiscale.density.R
 db33582f13b45c528c1fd360d3690644 *R/multiscale.slice.R
-a8d702f0397563e83cab8c3ffad0ffe2 *R/package.R
+a5a4568bb245e6b46e16b618a0c5311d *R/package.R
 985fc8cb62ecbfeef71b1d1d3e5f812e *R/pbc-data.R
 8a5c51bcafbad59488b5cb5ac90a651a *R/plot.bivden.R
 b0ec59274fdb004e034843d4cf6f961c *R/plot.msden.R
@@ -71,7 +71,7 @@ bf102425170eb27bc814f2c4189bbba7 *R/tol.contour.R
 29c2cbaacb65a7f090052d6402be4905 *R/tol.mc.ada.R
 d001b1ddeeb36ffd567eb1169bacde19 *R/tol.mc.fix.R
 65e6d26eb873c649c5ddb4faa3aeb8aa *R/tolerance.R
-481f6a02bc4c7ac4734522fe807257d8 *R/zzz.R
+61df199bd57f7c1f1f462ca40e65be3b *R/zzz.R
 88079823cd19cb025de1cc753b170cf4 *README.md
 f4c28b3ab897ca381388b9170aa449d1 *data/burk.rda
 3e4b24510c37079eda8ac87e783353d9 *data/fmd.rda
@@ -96,7 +96,7 @@ ec89b8dc44caf7a42789262336ca3a10 *man/plotsparr.Rd
 5dddcf17f253cbef0db98485a99742a1 *man/printsparr.Rd
 aa5a539da39f2f72fe0c0c03cbf89d55 *man/risk.Rd
 d204cc1fe622775e3b925ea23e6adc54 *man/sparr-internal.Rd
-b251747f0355c733059e920369df8972 *man/sparr-package.Rd
+96db1f1a761583ee350c8a332d655261 *man/sparr-package.Rd
 76a399bedf64bb5eee256942c3c81d27 *man/spattemp.density.Rd
 a53717068769df11c635201dc7bff685 *man/spattemp.risk.Rd
 c27692ad031ff6bd14cc93c4471e5297 *man/spattemp.slice.Rd

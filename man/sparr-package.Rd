@@ -12,8 +12,8 @@ risk surfaces via the density-ratio method and perform subsequent inference. Fix
 \details{
 \tabular{ll}{
 Package: \tab sparr\cr
-Date:\tab 2017-08-27\cr
-Version:\tab 2.1-12\cr
+Date:\tab 2017-09-28\cr
+Version:\tab 2.1-13\cr
 License: \tab GPL (>= 2)\cr
 }
 
@@ -58,8 +58,8 @@ England.
 \code{\link{burk}} a spatiotemporal point pattern of Burkitt's lymphoma in Uganda; artificially simulated control data are also provided for experimentation.
 
 Also available are a number of relevant additional spatial datasets built-in to the
-\code{\link[spatstat]{spatstat}} package (Baddeley and Turner, 2005; Baddeley et al., 2015), such as
-\code{\link[spatstat]{chorley}}, which concerns the distribution of
+\code{\link[spatstat]{spatstat}} package (Baddeley and Turner, 2005; Baddeley et al., 2015) through \code{spatstat.data}, such as
+\code{\link[spatstat.data]{chorley}}, which concerns the distribution of
 laryngeal cancer in an area of Lancashire, UK.\cr
 
 
