@@ -1,3 +1,30 @@
+        CHANGES IN sparr VERSION 2.2-1
+
+OVERVIEW
+
+    o New experimental function 'SLIK.adapt' for simultaneous global-pilot bandwidth selection for adaptive densities
+    o Newly visible function 'rimpoly' for random point generation
+    o Additional control over small bandwidth action in leave-one-out bandwidth selectors
+    o Improved edge-correction calculations for brute force adaptive leave-one-out
+    o Updated citation information and documentation corrections
+    
+    
+NEW FUNCTIONS
+
+    o rimpoly
+    Random spatial point generation based on a pixel image, returned with a polygonal window
+    o SLIK.adapt
+    Simultaneous bandwidth selector for global and pilot bandwidth for adaptive density estimates based on likelihood cross-validation
+   
+    
+SIGNIFICANT USER-VISIBLE CHANGES
+
+    o LIK.density, LSCV.density
+    New argument 'zero.action' to provide greater control over the behaviour of leave-one-out
+    calculations at very small bandwidths.
+    
+
+
         CHANGES IN sparr VERSION 2.1-14
 
 OVERVIEW
