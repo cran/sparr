@@ -1,8 +1,8 @@
 Package: sparr
 Type: Package
 Title: Spatial and Spatiotemporal Relative Risk
-Version: 2.2-11
-Date: 2018-03-11
+Version: 2.2-12
+Date: 2018-07-21
 Authors@R: c(
   person(c("Tilman", "M."), "Davies", role = c("aut", "cre"), email = "tdavies@maths.otago.ac.nz"),
   person(c("Jonathan", "C."), "Marshall", role = c("aut"), email = "j.c.marshall@massey.ac.nz"))
@@ -17,9 +17,9 @@ RoxygenNote: 6.0.1
 URL: http://tilmandavies.github.io/sparr,
         https://github.com/tilmandavies/sparr
 BugReports: https://github.com/tilmandavies/sparr/issues
-Packaged: 2018-03-10 22:46:07 UTC; tdavies
+Packaged: 2018-07-21 23:52:46 UTC; tdavies
 Author: Tilman M. Davies [aut, cre],
   Jonathan C. Marshall [aut]
 Maintainer: Tilman M. Davies <tdavies@maths.otago.ac.nz>
 Repository: CRAN
-Date/Publication: 2018-03-10 23:30:50 UTC
+Date/Publication: 2018-07-22 04:40:03 UTC

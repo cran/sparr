@@ -14,7 +14,7 @@
 #' 
 #' Identifiability problems can sometimes arise when the global and pilot bandwidths are allowed to `float freely' in the bivariate optimisation routine, which is the default
 #' behaviour of the function (with \code{hold = FALSE}). This can be curbed by setting \code{hold = TRUE}, which forces both the global and pilot
-#' to be held at the same value during optimisation. Doing this also has the beneficial side effect of turning the problem into one of univariate optimisation, thereby reducing total computational cost.
+#' to be held at the same value during optimisation. Doing this also has the beneficial side effect of turning the problem into one of univariate optimisation, thereby reducing total computational cost. Current work (Davies & Lawson, 2018) provides some empirical evidence that this strategy performs quite well in practice.
 #' 
 #' Like \code{\link{LSCV.density}} and \code{\link{LIK.density}}, the argument \code{zero.action} can be used to control the level of severity in response to small bandwidths that result (due to numerical error) in at least one density value being zero or less. 
 #' When this argument is passed a vector of length 2, the first entry corresponds to the global bandwidth (and hence refers to checks of the final adaptive density estimate and its leave-one-out values) and the second to the pilot bandwidth (and hence checks the fixed-bandwidth pilot density and its leave-one-out values).
@@ -28,7 +28,7 @@
 #' @param pp An object of class \code{\link[spatstat]{ppp}} giving the observed
 #'   2D data to be smoothed.
 #' @param hold Logical value indicating whether to hold the global and pilot bandwidths equal throughout the
-#'   optimisation; defaults to \code{FALSE}. See `Details'.
+#'   optimisation; defaults to \code{FALSE}. See `Details'. 
 #' @param hlim An optional vector of length 2 giving the limits of the
 #'   optimisation routine with respect to the bandwidth when \code{hold = TRUE}. If unspecified, the
 #'   function attempts to choose this automatically. Ignored when \code{hold = FALSE}.
@@ -44,13 +44,14 @@
 #' @param verbose Logical value indicating whether to provide function progress
 #'   commentary.
 #' @param zero.action A numeric vector of length 2, each value being either \code{-1}, \code{0} (default), \code{1} or \code{2} controlling how the function should behave in response to numerical errors at very small bandwidths, when such a bandwidth results in one or more zero or negative density values during the leave-one-out computations. See `Details'.
+#' @param optim.control An optional list to be passed to the \code{control} argument of \code{\link[stats]{optim}} for further control over the numeric optimisation when \code{hold = FALSE}. See the documentation for \code{\link[stats]{optim}} for further details.
 #' @param ... Additional arguments controlling density estimation for the internal calculations. Relevant arguments are \code{resolution}, \code{gamma.scale}, and \code{trim}. If unsupplied these default to \code{64}, \code{"geometric"}, and \code{5} respectively; see \code{\link{bivariate.density}} for a further explanation of these arguments.
 #'   
 #' @return A numeric vector of length 2 giving the likelihood-maximised global and pilot bandwidths.
 #' 
 #' @section Note: While theoretically valid, this is a largely experimental function. There is presently little in the literature to suggest how well this
-#' type of simultaneous global/pilot bandwidth selection might perform in practice. Some current research efforts (T.M. Davies, A.B. Lawson, personal communication)
-#' seek to address these questions in the future.
+#' type of simultaneous global/pilot bandwidth selection might perform in practice. Current research efforts (Davies & Lawson, 2018)
+#' seek in part to address these questions.
 #' 
 #' 
 #'
@@ -62,6 +63,7 @@
 #'   \code{\link[spatstat]{bw.frac}}.
 #'
 #' @references
+#' Davies, T.M. and Lawson, A.B. (2018), An evaluation of likelihood-based bandwidth selectors for spatial and spatiotemporal kernel estimates, \emph{Submitted for publication}.
 #' 
 #' Silverman, B.W. (1986), \emph{Density Estimation for Statistics
 #' and Data Analysis}, Chapman & Hall, New York.
@@ -72,7 +74,7 @@
 #' @examples
 #' 
 #'
-#' \dontrun{
+#' \donttest{
 #' 
 #' data(pbc)
 #' pbccas <- split(pbc)$case
@@ -83,7 +85,7 @@
 #' } 
 #' 
 #' @export
-SLIK.adapt <- function(pp,hold=FALSE,start=rep(OS(pp),2),hlim=NULL,edge=TRUE,zero.action=c(-1,0),parallelise=NULL,verbose=TRUE,...){
+SLIK.adapt <- function(pp,hold=FALSE,start=rep(OS(pp),2),hlim=NULL,edge=TRUE,zero.action=c(-1,0),optim.control=list(),parallelise=NULL,verbose=TRUE,...){
   if(class(pp)!="ppp") stop("data object 'pp' must be of class \"ppp\"")
   W <- Window(pp)
   # resolution <- checkit(resolution,"'resolution'")
@@ -116,7 +118,7 @@ SLIK.adapt <- function(pp,hold=FALSE,start=rep(OS(pp),2),hlim=NULL,edge=TRUE,zer
   
   # optimise/optim #
   if(!hold){
-    result <- optim(start,loowrap_nohold,pp=pp,edge=edge,gamma.scale=gamma.scale,trim=trim,resolution=resolution,vbs=verbose,parallel=parallelise,za=zero.action)$par
+    result <- optim(start,loowrap_nohold,pp=pp,edge=edge,gamma.scale=gamma.scale,trim=trim,resolution=resolution,vbs=verbose,parallel=parallelise,za=zero.action,control=optim.control)$par
     result <- as.numeric(result)
   } else {
     if(is.null(hlim)){
@@ -137,7 +139,10 @@ SLIK.adapt <- function(pp,hold=FALSE,start=rep(OS(pp),2),hlim=NULL,edge=TRUE,zer
 loowrap_hold <- function(hh,...) return(loowrap_nohold(c(hh,hh),...))
   
 loowrap_nohold <- function(h0hp,pp,edge,gamma.scale,trim,resolution,vbs,parallel,za){
-  if(any(h0hp<=0)) return(NA)
+  W <- Window(pp)
+  
+  if(any(h0hp<=0)||any(h0hp>100*max(c(diff(W$xrange),diff(W$yrange))))) return(NA)
+  
   if(vbs) cat("h0: ",h0hp[1],"; hp: ",h0hp[2],"\n",sep="")
   
   if(za[2]==-1){
