@@ -4,9 +4,11 @@
 \name{pbc}
 \alias{pbc}
 \title{Primary biliary cirrhosis data}
-\format{\code{pbc} is a dichotomously marked
-\code{\link[spatstat]{ppp.object}}, with locations expressed in UK Ordnance
-Survey Coordinates (km).}
+\format{
+\code{pbc} is a dichotomously marked
+\code{\link[spatstat.geom:ppp]{ppp.object}}, with locations expressed in UK Ordnance
+Survey Coordinates (km).
+}
 \source{
 Prince et al. (2001), The geographical distribution of primary
 biliary cirrhosis in a well-defined cohort, \emph{Hepatology}, \bold{34},
@@ -21,8 +23,7 @@ analysis of these data in the spirit of \code{\link{sparr}} was performed in
 Davies and Hazelton (2010). Also included is the polygonal study region.
 }
 \section{Acknowledgements}{
- The authors thank Prof. Peter Diggle at Lancaster
-University (\url{http://www.lancs.ac.uk/staff/diggle/}) for providing access
+ The authors thank Prof. Peter Diggle for providing access
 to these data.
 }
 
