@@ -1,4 +1,4 @@
-eb8ab2a139064fa7e6597d3308b4928c *DESCRIPTION
+fc2afed4bbef95fb8efa797e7485185a *DESCRIPTION
 84495c3e9bc758131b2d23fed6d10f08 *NAMESPACE
 1033ff9631dfeaa674a889a110c658ae *R/BAM.single.R
 19093aaf3c5db83f91072f1c67ead8b7 *R/BAMprep.R
@@ -37,7 +37,7 @@ b7d8ce59e38554dd864e9a971aa2909c *R/kernel2d.R
 34a8e2c9da30ac1a7ac6ae0f8defa8e4 *R/ms.loo.R
 244c72368aab002566c99ab5689b3ca9 *R/multiscale.density.R
 e0f6193f9d3c4343dd5a5978c8890137 *R/multiscale.slice.R
-d19cad5be30b7af92c2728f3b883d6c1 *R/package.R
+346e54b8ee453e37b8be4c87a70feb33 *R/package.R
 b13f093e77abd04fbd47c50a85ced8d0 *R/pbc-data.R
 b6a7e67dde7fe2fa869918a3e4309182 *R/plot.bivden.R
 b0ec59274fdb004e034843d4cf6f961c *R/plot.msden.R
@@ -53,7 +53,7 @@ a13344f3a732e0b839b2654a149a9518 *R/print.rrst.R
 232f3d6a33b477c41238941eda6f0513 *R/processgamma.R
 46b5f8e5011ce7724138d597219aca5c *R/processnstar.R
 890e3f8f04bc2a14bf64dd60954e1ef4 *R/processscaler.R
-1eea8f6893f2944b7d9292ef86aa6228 *R/rimpoly.R
+0ea79d7b51a602b573106503b4c803e5 *R/rimpoly.R
 32ae4a9c69b4b8e76ddacfa67021d609 *R/risk.R
 887e1267ec4a072d6f68336f6cafe573 *R/spattemp.LOO.R
 c8f42724edfebbe367e5e054435498a3 *R/spattemp.density.R
@@ -97,10 +97,10 @@ c245b55e1425bd6c5f2f6d8f6222bae5 *man/multiscale.slice.Rd
 18299e89a04e5e619453056117bb941e *man/pbc.Rd
 41adcc5563ca95f71acb69f542153cf1 *man/plotsparr.Rd
 bf934161dfd3dd269fec0a0ec589151a *man/printsparr.Rd
-778a2942f5fa5c9259a07e19bc316843 *man/rimpoly.Rd
+b31dee0be57066a23bbac34eb352863f *man/rimpoly.Rd
 9adb3fcecc66ecafe2f84025dae13c74 *man/risk.Rd
 d204cc1fe622775e3b925ea23e6adc54 *man/sparr-internal.Rd
-41c2e356e178daa471b9b8cde8f5bfb9 *man/sparr-package.Rd
+ad57f35ca7821da829de69097a700948 *man/sparr-package.Rd
 c2af10758687c94d38f440fea7d66a07 *man/spattemp.density.Rd
 e55b6a5960cc08839f315f7335ab79c7 *man/spattemp.risk.Rd
 480f952c49bdb00d721dca4047832831 *man/spattemp.slice.Rd
