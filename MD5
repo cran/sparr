@@ -1,4 +1,4 @@
-03dc22818ca0a2d442637fdebcfa4f97 *DESCRIPTION
+a3846c5f39a4201db78c607f49a04326 *DESCRIPTION
 f480370b869e4262ccc5d37c6b329813 *NAMESPACE
 1033ff9631dfeaa674a889a110c658ae *R/BAM.single.R
 19093aaf3c5db83f91072f1c67ead8b7 *R/BAMprep.R
@@ -29,7 +29,7 @@ a2b1d68a025d973bbf0b9ec28fc3f019 *R/boot.opt.spatial.adapt.R
 020efd2989d20c2226e90ea0741940a2 *R/burk-data.R
 ca87d7c58e5f7db5a7cf0f388e367dbe *R/checking.R
 ed56557c34dea276f7d8784679a3ee49 *R/edgeh.R
-30bcd9da2c6f743b8affc4e07e1f0194 *R/fft.R
+18aba6835887a88eff9bf96eee60cee4 *R/fft.R
 56a877fcfea23bce36ebd451f69e6b1c *R/fmd-data.R
 7f3e259328854381094e723644c873e6 *R/gethcats.R
 aa736f2d3f186b1ea1a0decbb5850c63 *R/identical_windows.R
@@ -37,7 +37,7 @@ b7d8ce59e38554dd864e9a971aa2909c *R/kernel2d.R
 34a8e2c9da30ac1a7ac6ae0f8defa8e4 *R/ms.loo.R
 244c72368aab002566c99ab5689b3ca9 *R/multiscale.density.R
 e0f6193f9d3c4343dd5a5978c8890137 *R/multiscale.slice.R
-9a3df72771a7cf3f5fc2ae4d271bfe4a *R/package.R
+f82a5b4068eb9071f9f9bd1c7089c06c *R/package.R
 b13f093e77abd04fbd47c50a85ced8d0 *R/pbc-data.R
 b6a7e67dde7fe2fa869918a3e4309182 *R/plot.bivden.R
 b0ec59274fdb004e034843d4cf6f961c *R/plot.msden.R
@@ -54,7 +54,8 @@ a13344f3a732e0b839b2654a149a9518 *R/print.rrst.R
 46b5f8e5011ce7724138d597219aca5c *R/processnstar.R
 890e3f8f04bc2a14bf64dd60954e1ef4 *R/processscaler.R
 0ea79d7b51a602b573106503b4c803e5 *R/rimpoly.R
-32ae4a9c69b4b8e76ddacfa67021d609 *R/risk.R
+e11788bb71082ff157d487b0c30e9dd0 *R/risk.R
+622b77139f3f0de0f276ccf79dff9c97 *R/shrinkydink.R
 887e1267ec4a072d6f68336f6cafe573 *R/spattemp.LOO.R
 c8f42724edfebbe367e5e054435498a3 *R/spattemp.density.R
 0b1252671688f7ef20a094c8f90bfcd5 *R/spattemp.risk.R
@@ -73,11 +74,11 @@ d06e28430710419079089399f179eb53 *R/tol.asy.ada.R
 d001b1ddeeb36ffd567eb1169bacde19 *R/tol.mc.fix.R
 329b07a8b59cf64613d02789cd8eb605 *R/tolerance.R
 8d448f562a5a7d6d43461290152ce9ea *R/zzz.R
-57f565f5ccd90ec23af7ea085e8cc5a9 *README.md
+d856c6f5e5aff90ea6f4adbb25fe8d4f *README.md
 f4c28b3ab897ca381388b9170aa449d1 *data/burk.rda
 3e4b24510c37079eda8ac87e783353d9 *data/fmd.rda
 df5a81c6800576cfba360fee9284237e *data/pbc.rda
-3dee728cfba1038a7e02cbc7adfdbe80 *inst/CITATION
+04997567fb64ba89761679f63d893607 *inst/CITATION
 6059ccf476312e2634007dcff839705d *man/BOOT.density.Rd
 5f93f8984cb3c7efb12c657702003efd *man/BOOT.spattemp.Rd
 fc6796183d0c6d8b9bd01dd124eb2d03 *man/CV.Rd
@@ -89,8 +90,8 @@ d986b3d025be0f75a5c35738cd19ad4e *man/OS.Rd
 4641aa5a75e414b0d0621bebea5988b5 *man/available.h0.Rd
 8e60f67a68b8b6be4facad89d1f3a822 *man/bivariate.density.Rd
 aba43697b6a3016dfdf0271e36856240 *man/burk.Rd
-9fff60e02b5fe322cf7b75c6c8f40a24 *man/fft2d.Rd
-24299c817bb08983fc0697e292dcea0b *man/figures/README-pbc-example-1.png
+4fe78d382b696b8b4e77e1626036ce9b *man/fft2d.Rd
+21627f83204b0bb3c37ca62f9aff6dd0 *man/figures/README-pbc-example-1.png
 08671eb68f582948e6e46df3ed5e75ac *man/fmd.Rd
 bb7be8a5a7113a7dc65b46784bd3da16 *man/multiscale.density.Rd
 c245b55e1425bd6c5f2f6d8f6222bae5 *man/multiscale.slice.Rd
@@ -98,9 +99,9 @@ c245b55e1425bd6c5f2f6d8f6222bae5 *man/multiscale.slice.Rd
 41adcc5563ca95f71acb69f542153cf1 *man/plotsparr.Rd
 bf934161dfd3dd269fec0a0ec589151a *man/printsparr.Rd
 b31dee0be57066a23bbac34eb352863f *man/rimpoly.Rd
-9adb3fcecc66ecafe2f84025dae13c74 *man/risk.Rd
-d204cc1fe622775e3b925ea23e6adc54 *man/sparr-internal.Rd
-60a9bb259e8accb7a0f78331b7491da5 *man/sparr-package.Rd
+6ec20857e11de776615a45b4c50878ea *man/risk.Rd
+ccedede75b61004a9bea3b8f45c7e939 *man/sparr-internal.Rd
+3ad264874301c9f69468ccab5c5f2264 *man/sparr-package.Rd
 c2af10758687c94d38f440fea7d66a07 *man/spattemp.density.Rd
 e55b6a5960cc08839f315f7335ab79c7 *man/spattemp.risk.Rd
 480f952c49bdb00d721dca4047832831 *man/spattemp.slice.Rd
