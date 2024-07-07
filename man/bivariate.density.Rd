@@ -203,7 +203,7 @@ shown above) are also implemented.
         computationally expensive for adaptive smoothing. This is because the
         leave-one-out mechanism is applied to both the pilot estimation and the
         final estimation stages. Experimental code to do this via parallel
-        processing using the \code{\link{foreach}} routine is implemented.
+        processing using the \code{\link[foreach]{foreach}} routine is implemented.
         Fixed-bandwidth leave-one-out can be performed directly in
         \code{\link[spatstat.explore]{density.ppp}}.
     }
@@ -227,8 +227,9 @@ chden3 <- bivariate.density(chorley,h0=1.5,hp=1,adapt=TRUE)
 # Adaptive smoothing; uniform edge correction; partitioning approximation
 chden4 <- bivariate.density(chorley,h0=1.5,hp=1,adapt=TRUE,davies.baddeley=0.025)
  
-par(mfrow=c(2,2))
-plot(chden1);plot(chden2);plot(chden3);plot(chden4)  
+oldpar <- par(mfrow=c(2,2))
+plot(chden1);plot(chden2);plot(chden3);plot(chden4)
+par(oldpar)
 }
 
 }
