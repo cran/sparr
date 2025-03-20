@@ -1,4 +1,4 @@
-f77cc163ec68292f1e81282f352985c9 *DESCRIPTION
+b39e4b6289b874f6be8cec5f16217591 *DESCRIPTION
 314ce76415a2d5f4bcb7549b364bbdf3 *NAMESPACE
 96097c34f0d35a2e933104dd5efdde25 *R/BAM.single.R
 19093aaf3c5db83f91072f1c67ead8b7 *R/BAMprep.R
@@ -69,7 +69,7 @@ bfcaa2154f899cbd65854a736081f39e *R/summary.stden.R
 0d3d1b84f0ce6f32f1c50e9441000392 *R/tol.asy.ada.R
 8769d0ed379d4ede019166f54a9c246c *R/tol.asy.fix.R
 372bd3ccc02e69b35476c91c35697c07 *R/tol.asy.st.R
-b5e00ab44146348d9f6c161951ec4726 *R/tol.classify.R
+a8bc7c30dddf96183be6909d64df6927 *R/tol.classify.R
 8bc9d8bb082f53f56c345ab694dfb5b3 *R/tol.classplot.R
 7fbf9e3d78c664adc8e53e056158bf65 *R/tol.contour.R
 29c2cbaacb65a7f090052d6402be4905 *R/tol.mc.ada.R
@@ -103,7 +103,7 @@ bf934161dfd3dd269fec0a0ec589151a *man/printsparr.Rd
 81d12dec71169098b306df86cf4872fc *man/rimpoly.Rd
 3fc0fb453ab659040f39003b521e18fb *man/risk.Rd
 ccedede75b61004a9bea3b8f45c7e939 *man/sparr-internal.Rd
-83e632ea2ad4de5e2c4ff477829542fc *man/sparr-package.Rd
+d3d391832f6fefe554f09d5e9ce5fe4e *man/sparr-package.Rd
 c2af10758687c94d38f440fea7d66a07 *man/spattemp.density.Rd
 4f7175a954d1b0b39600ee46aedb0586 *man/spattemp.risk.Rd
 1819c236aa81db92bb9fa4e7a7e73f58 *man/spattemp.slice.Rd
